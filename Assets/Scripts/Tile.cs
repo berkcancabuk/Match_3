@@ -1,25 +1,24 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class Tile : MonoBehaviour
 {
+    public enum CandyType
+    {
+        Green,
+        Blue,
+        Purple,
+        Red,
+        Empty
+    }
 
+    public CandyType candyType = CandyType.Empty;
+    
     private Vector2 m_tilePosition;
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
-
+    
     public void SetTilePosition(Vector2 tilePosition)
     {
         m_tilePosition = tilePosition;
@@ -34,5 +33,10 @@ public class Tile : MonoBehaviour
     private void MoveBottom()
     {
 
+    }
+    private void OnMouseDown()
+    {
+        PlayerController.Instance.SelectObject(this);
+        
     }
 }
