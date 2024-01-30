@@ -49,6 +49,8 @@ public class Board : MonoBehaviour
         }
         Thread.Sleep(3000);
         FillEmptyTile();
+        Thread.Sleep(500);
+        AddRigidbody();
     }
 
 
@@ -59,11 +61,12 @@ public class Board : MonoBehaviour
             _mySequence = DOTween.Sequence();
             for (int j = 0; j < row; j++)
             {
-                if (_allTiles[i,j].candyType.Equals(Tile.CandyType.Empty))
+                if (_allTiles[i,j].candyType.Equals(CandyType.Empty))
                 {
                     var candy = Instantiate(candies[Random.Range(0, candies.Length)], new Vector2(i, row + 1),
                         Quaternion.identity, parentCandy);
                     _allTiles[i, j].candyType = candy.GetComponent<Tile>().candyType;
+                    //candy.AddComponent<Rigidbody2D>().gravityScale = 0f;
                     MoveCandy(candy.transform, i, j);
                 }
             }
@@ -73,6 +76,13 @@ public class Board : MonoBehaviour
         }
     }
 
+    private void AddRigidbody()
+    {
+        foreach(Tile tiles in _allTiles)
+        {
+            tiles.gameObject.AddComponent<Rigidbody2D>().gravityScale = 0f;
+        }
+    }
     private void MoveCandy(Transform candy,int column, int row)
     {
         Tween move =candy.DOMove(new Vector2(column, row), 0.4f).SetDelay(Random.Range(0,.4f));

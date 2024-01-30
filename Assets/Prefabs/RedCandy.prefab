@@ -10,8 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 53512452306738361}
   - component: {fileID: 7138230457394264792}
-  - component: {fileID: 894606937725780378}
   - component: {fileID: 5431798773698250913}
+  - component: {fileID: 2740270968156875474}
   m_Layer: 0
   m_Name: RedCandy
   m_TagString: Untagged
@@ -86,19 +86,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &894606937725780378
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2119238513619081668}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 21314f75def7e1a409b63b144c82a5b9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  candyType: 0
 --- !u!61 &5431798773698250913
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -144,3 +131,16 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.96, y: 0.96}
   m_EdgeRadius: 0
+--- !u!114 &2740270968156875474
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2119238513619081668}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0726e9761e30d7141a63c520c2602540, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  candyType: 0
