@@ -1,22 +1,18 @@
-﻿
-
-using DG.Tweening;
+﻿using DG.Tweening;
 using System.Threading.Tasks;
 using UnityEngine;
 
 public class Candy : Tile
 {
+    Vector2 _endPos;
+    Vector2 _startPos;
+    private bool _draggingStarted;
 
+    private const float swipeThreshold = 0.2f;
 
-    Vector2 endPos;
-    Vector2 startPos;
-    bool draggingStarted = false;
+    Direction _direction = Direction.None;
 
-    float swipeThreshold = 0.2f;
-
-    Direction direction = Direction.None;
-
-    Vector3 mousePosition;
+    Vector3 _mousePosition;
 
 
     public CandyType GetCandyType()
@@ -26,90 +22,55 @@ public class Candy : Tile
 
     private void OnMouseDown()
     {
-        mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        if (Camera.main != null) _mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         Debug.Log("On begin Drag");
-        draggingStarted = true;
-        startPos = mousePosition;
+        _draggingStarted = true;
+        _startPos = _mousePosition;
+        Board.instance.selectedObject = ArrayPos;
     }
+
     private void OnMouseDrag()
     {
-        if (draggingStarted)
+        
+        if (_draggingStarted)
         {
-            endPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            print(candyType +"--CandyType");
+            if (Camera.main != null) _endPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
-            Vector2 difference = endPos - startPos; // difference vector between start and end positions.
+            Vector2 difference = _endPos - _startPos;
 
             if (difference.magnitude > swipeThreshold)
             {
-                if (Mathf.Abs(difference.x) > Mathf.Abs(difference.y)) // Do horizontal swipe
+                if (Mathf.Abs(difference.x) > Mathf.Abs(difference.y))
                 {
-                    direction = difference.x > 0 ? Direction.Right : Direction.Left; // If greater than zero, then swipe to right.
+                    _direction = difference.x > 0
+                        ? Direction.Right
+                        : Direction.Left;
                 }
-                else //Do vertical swipe
+                else
                 {
-                    direction = difference.y > 0 ? Direction.Up : Direction.Down; // If greater than zero, then swipe to up.
+                    _direction = difference.y > 0
+                        ? Direction.Up
+                        : Direction.Down;
                 }
             }
             else
             {
-                direction = Direction.None;
+                _direction = Direction.None;
             }
-
         }
     }
 
     private void OnMouseUp()
     {
-        if (draggingStarted && direction != Direction.None)
-        {
-            //Do something with this direction data.
-            Debug.Log("Swipe direction: " + direction);
-        }
-        //reset the variables
-        switch (direction)
-        {
-            case Direction.Left:
-                GetComponent<BoxCollider2D>().offset = new Vector2(-0.2f, 0);
-                break;
-            case Direction.Up:
-                GetComponent<BoxCollider2D>().offset = new Vector2(0, 0.2f);
-                break;
-            case Direction.Right:
-                GetComponent<BoxCollider2D>().offset = new Vector2(0.2f, 0);
-                break;
-            case Direction.Down:
-                GetComponent<BoxCollider2D>().offset = new Vector2(0, -0.2f);
+        
+      
 
-                break;
-            case Direction.None:
-                GetComponent<BoxCollider2D>().offset = new Vector2(0, 0);
-                break;
-        }
-
-        startPos = Vector2.zero;
-        endPos = Vector2.zero;
-        draggingStarted = false;
+        _startPos = Vector2.zero;
+        _endPos = Vector2.zero;
+        _draggingStarted = false;
+        
+        
+        Board.instance.TileSwapCheck(Board.instance.selectedObject, _direction);
     }
-    private const float TWEEN_DURATION = 0.2f;
-    public async Task Swap(Transform obj1, Transform obj2)
-    {
-       
-        var sequence = DOTween.Sequence();
-        sequence.Join(obj1.DOMove(obj2.position, TWEEN_DURATION))
-            .Join(obj2.DOMove(obj1.position, TWEEN_DURATION));
-
-        await sequence.Play().AsyncWaitForCompletion();
-        GetComponent<BoxCollider2D>().offset = new Vector2(0, 0);
-    }
-
-    private async void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (collision.transform.TryGetComponent(out Candy comp))
-        {
-            
-            await Swap(transform, collision.transform);
-
-        }
-    }
-
 }
