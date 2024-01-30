@@ -1,18 +1,14 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Threading;
 using System.Threading.Tasks;
 using DG.Tweening;
-using Unity.Mathematics;
 using UnityEngine;
-using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
 public class Board : MonoBehaviour
 {
-    public static Board instance;
+    public static Board Instance;
 
+    [SerializeField] private MatchChecker _matchChecker;
     public int column;
     public int row;
     public GameObject tilePrefab;
@@ -29,12 +25,17 @@ public class Board : MonoBehaviour
 
     private void Awake()
     {
-        if (instance != null)
+        if (Instance != null)
         {
-            Destroy(this);
+            Destroy(this.gameObject);
+        }
+        else
+        {
+            Instance = this;
+            DontDestroyOnLoad(this.gameObject);
         }
 
-        instance = this;
+        _matchChecker = GetComponent<MatchChecker>();
     }
 
     private void Start()
@@ -45,7 +46,7 @@ public class Board : MonoBehaviour
         SetUp();
     }
 
-    async void SetUp()
+    private async void SetUp()
     {
         for (var i = 0; i < column; i++)
         {
@@ -58,7 +59,6 @@ public class Board : MonoBehaviour
         }
 
         await FillEmptyTile();
-        AddRigidbody();
     }
 
 
@@ -69,13 +69,13 @@ public class Board : MonoBehaviour
             _mySequence = DOTween.Sequence();
             for (int j = 0; j < column; j++)
             {
-                if (_allBackGround[j, i].candyType.Equals(CandyType.Empty))
+                if (_allBackGround[j, i]?.candyType == CandyType.Empty)
                 {
                     var candy = Instantiate(candies[Random.Range(0, candies.Length)], new Vector2(j, row + 1),
                         Quaternion.identity, parentCandy);
 
                     _allCandies[j, i] = candy.GetComponent<Tile>();
-                    candy.GetComponent<Tile>().ArrayPos = new Vector2(j, i);
+                    candy.GetComponent<Tile>().arrayPos = new Vector2(j, i);
                     MoveCandy(candy.transform, i, j);
                 }
             }
@@ -84,17 +84,10 @@ public class Board : MonoBehaviour
         }
     }
 
-    private void AddRigidbody()
-    {
-        foreach (Transform tiles in parentCandy)
-        {
-            tiles.gameObject.AddComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Kinematic;
-        }
-    }
 
     private void MoveCandy(Transform candy, int column, int row)
     {
-        Tween move = candy.DOMove(new Vector2(row, column), 0.3f).SetDelay(0.05f);
+        Tween move = candy.DOMove(new Vector2(row, column), TWEEN_DURATION);
         _mySequence.Join(move);
     }
 
@@ -102,11 +95,11 @@ public class Board : MonoBehaviour
 
     private async Task Swap(Tile obj1, Tile obj2)
     {
-        var temp = obj1.ArrayPos;
-        obj1.ArrayPos = obj2.ArrayPos;
+        var temp = obj1.arrayPos;
+        obj1.arrayPos = obj2.arrayPos;
         _allCandies[(int)temp.x, (int)temp.y] = obj2;
-        _allCandies[(int)obj2.ArrayPos.x, (int)obj2.ArrayPos.y] = obj1;
-        obj2.ArrayPos = temp;
+        _allCandies[(int)obj2.arrayPos.x, (int)obj2.arrayPos.y] = obj1;
+        obj2.arrayPos = temp;
 
 
         var sequence = DOTween.Sequence();
@@ -114,34 +107,44 @@ public class Board : MonoBehaviour
             .Join(obj2.transform.DOMove(obj1.transform.position, TWEEN_DURATION));
 
         await sequence.Play().AsyncWaitForCompletion();
-        GetComponent<BoxCollider2D>().offset = new Vector2(0, 0);
     }
 
 
-    public void TileSwapCheck(Vector2 pos, Direction moveDir)
+    public async Task TileSwapCheck(Vector2 pos, Direction moveDir)
     {
-        var outOfBoundsCheck = (pos.x < 0) && (pos.y < 0) && (pos.x >= row) && (pos.y >= column);
-        if (outOfBoundsCheck)
-        {
-            return;
-        }
-
+        var x = (int)pos.x;
+        var y = (int)pos.y;
+        Tile candy = _allCandies[x, y];
+        Tile secondCandy = null;
         switch (moveDir)
         {
             case Direction.Left:
-                Swap(_allCandies[(int)pos.x, (int)pos.y], _allCandies[(int)pos.x - 1, (int)pos.y]).Wait();
+                if (x - 1 < 0) return;
+                await Swap(_allCandies[x, y], _allCandies[x - 1, y]);
+                secondCandy = _allCandies[x, y];
                 break;
             case Direction.Up:
-                Swap(_allCandies[(int)pos.x, (int)pos.y], _allCandies[(int)pos.x, (int)pos.y + 1]).Wait();
+                if (y + 1 > column+1) return;
+                await Swap(_allCandies[x, y], _allCandies[x, y + 1]);
+                secondCandy = _allCandies[x, y];
                 break;
             case Direction.Right:
-                Swap(_allCandies[(int)pos.x, (int)pos.y], _allCandies[(int)pos.x + 1, (int)pos.y]).Wait();
+                if (x + 1 > row) return;
+                await Swap(_allCandies[x, y], _allCandies[x + 1, y]);
+                secondCandy = _allCandies[x, y];
                 break;
             case Direction.Down:
-                Swap(_allCandies[(int)pos.x, (int)pos.y], _allCandies[(int)pos.x, (int)pos.y - 1]).Wait();
+                if (y - 1 < 0) return;
+                await Swap(_allCandies[x, y], _allCandies[x, y - 1]);
+                secondCandy = _allCandies[x, y];
                 break;
             case Direction.None:
                 throw new ArgumentOutOfRangeException(nameof(moveDir), moveDir, null);
         }
+        
+        print((Candy)candy + " name" );
+        _matchChecker.CheckExplosion((Candy)candy,_allCandies);
+        _matchChecker.CheckExplosion((Candy)secondCandy,_allCandies);
     }
+
 }

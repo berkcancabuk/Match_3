@@ -26,7 +26,7 @@ public class Candy : Tile
         Debug.Log("On begin Drag");
         _draggingStarted = true;
         _startPos = _mousePosition;
-        Board.instance.selectedObject = ArrayPos;
+        Board.Instance.selectedObject = arrayPos;
     }
 
     private void OnMouseDrag()
@@ -34,7 +34,6 @@ public class Candy : Tile
         
         if (_draggingStarted)
         {
-            print(candyType +"--CandyType");
             if (Camera.main != null) _endPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
             Vector2 difference = _endPos - _startPos;
@@ -71,6 +70,6 @@ public class Candy : Tile
         _draggingStarted = false;
         
         
-        Board.instance.TileSwapCheck(Board.instance.selectedObject, _direction);
+        Board.Instance.TileSwapCheck(Board.Instance.selectedObject, _direction);
     }
 }
