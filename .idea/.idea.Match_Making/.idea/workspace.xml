@@ -7,7 +7,6 @@
     <list default="true" id="b0cc41e2-6aed-45d2-84e7-22a6101ff277" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Match_Making/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Match_Making/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/Board.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Board.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/MatchChecker.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/MatchChecker.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/TileMover.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/TileMover.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -103,7 +102,7 @@
       <option name="presentableId" value="Default" />
       <updated>1706529235272</updated>
       <workItem from="1706529236413" duration="7751000" />
-      <workItem from="1706681803640" duration="18109000" />
+      <workItem from="1706681803640" duration="19901000" />
     </task>
     <servers />
   </component>
@@ -133,42 +132,29 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/Assets/Scripts/TileMover.cs</url>
-          <line>23</line>
-          <properties documentPath="C:\Users\berkcan.cabuk\Documents\GitHub\Match_Making\Assets\Scripts\TileMover.cs" initialLine="23" containingFunctionPresentation="Method 'TileBottomMovement'">
+          <line>29</line>
+          <properties documentPath="C:\Users\berkcan.cabuk\Documents\GitHub\Match_Making\Assets\Scripts\TileMover.cs" initialLine="29" containingFunctionPresentation="Method 'TileBottomMovement'">
             <startOffsets>
-              <option value="376" />
+              <option value="557" />
             </startOffsets>
             <endOffsets>
-              <option value="398" />
+              <option value="589" />
             </endOffsets>
           </properties>
-          <option name="timeStamp" value="71" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/Assets/Scripts/TileMover.cs</url>
-          <line>49</line>
-          <properties documentPath="C:\Users\berkcan.cabuk\Documents\GitHub\Match_Making\Assets\Scripts\TileMover.cs" initialLine="49" containingFunctionPresentation="Method 'TileBottomCheck'">
-            <startOffsets>
-              <option value="1066" />
-            </startOffsets>
-            <endOffsets>
-              <option value="1120" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="73" />
+          <option name="timeStamp" value="76" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/Assets/Scripts/Board.cs</url>
-          <line>213</line>
-          <properties documentPath="C:\Users\berkcan.cabuk\Documents\GitHub\Match_Making\Assets\Scripts\Board.cs" initialLine="213" containingFunctionPresentation="Method 'MoveSingleTileToBottom'">
+          <line>212</line>
+          <properties documentPath="C:\Users\berkcan.cabuk\Documents\GitHub\Match_Making\Assets\Scripts\Board.cs" initialLine="212" containingFunctionPresentation="Method 'MoveSingleTileToBottom'">
             <startOffsets>
-              <option value="6735" />
+              <option value="6739" />
             </startOffsets>
             <endOffsets>
-              <option value="6736" />
+              <option value="6824" />
             </endOffsets>
           </properties>
-          <option name="timeStamp" value="74" />
+          <option name="timeStamp" value="78" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

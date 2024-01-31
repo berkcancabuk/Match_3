@@ -12,16 +12,21 @@ public class TileMover
 
     public void AddRange(List<Tile> queue, Tile[,] enu)
     {
-        foreach (Tile obj in enu)
+        int rows = enu.GetLength(0);
+        int columns = enu.GetLength(1);
+
+        for (int i = 0; i < rows; i++)
         {
-            queue.Add(obj);
+            for (int j = 0; j < columns; j++)
+            {
+                queue.Add(enu[i, j]);
+            }
         }
         
     }
 
     public void TileBottomMovement(Tile[,] candies)
     {
-        Debug.Log("bitti mi");
         List<Tile> m_candyQueue = new();
         m_allCandies = candies;
         AddRange(m_candyQueue, m_allCandies);
@@ -29,7 +34,7 @@ public class TileMover
         {
             Tile t = m_candyQueue[i];
             
-            m_candyQueue.RemoveAt(i);
+            
             
             int x = (int)t.arrayPos.x;
             int y = (int)t.arrayPos.y;
@@ -39,7 +44,8 @@ public class TileMover
             if (TileBottomCheck(x,y))
             {
                 Board.Instance.MoveSingleTileToBottom(x,y);
-                m_candyQueue.Add(t);
+                //m_candyQueue.RemoveAt(i);
+                //m_candyQueue.Add(t);
             }
         }
     }
