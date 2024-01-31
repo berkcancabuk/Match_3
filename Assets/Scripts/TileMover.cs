@@ -1,8 +1,9 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 
-
+[Serializable]
 public class TileMover
 {
 
@@ -27,13 +28,15 @@ public class TileMover
 
             int x = (int)t.arrayPos.x;
             int y = (int)t.arrayPos.y;
-
+            if (y <= 0)
+                continue;
+            
             if (TileBottomCheck(x,y))
             {
-
+                
                 // Move single candy from board
-                //t.arrayPos = new Vector2(x, y - 1);
-                Board.Instance.MoveSingleTileToBottom(x, y);
+               //t.arrayPos = new Vector2(x, y - 1);
+                Board.Instance.MoveSingleTileToBottom(x,y);
                 m_candyQueue.Enqueue(t);
             }
             
@@ -44,7 +47,7 @@ public class TileMover
 
     private bool TileBottomCheck(int x, int y)
     {
-        if (m_allCandies[x, y-1].gameObject == null)
+        if (m_allCandies[x, y-1].gameObject == null && m_allCandies[x,y-1].candyType == CandyType.Empty)
         {
             return true;
         }

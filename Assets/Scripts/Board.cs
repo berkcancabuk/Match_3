@@ -12,8 +12,8 @@ public class Board : MonoBehaviour
     public int column;
     public int row;
     public GameObject tilePrefab;
-    private Tile[,] _allBackGround;
-    private Tile[,] _allCandies;
+    public Tile[,] _allBackGround;
+    public Tile[,] _allCandies;
 
 
     private Sequence _mySequence = DOTween.Sequence();
@@ -21,6 +21,7 @@ public class Board : MonoBehaviour
     [SerializeField] private GameObject[] candies;
     [SerializeField] private GameObject _emptyCandy;
 
+    public TileMover _tileMover = new();
     public Vector2 selectedObject;
 
     private void Awake()
@@ -35,6 +36,7 @@ public class Board : MonoBehaviour
             DontDestroyOnLoad(this.gameObject);
         }
 
+        print(_tileMover);
         _matchChecker = GetComponent<MatchChecker>();
     }
 
@@ -198,6 +200,18 @@ public class Board : MonoBehaviour
         
         _matchChecker.CheckExplosion((Candy)candy,_allCandies);
         _matchChecker.CheckExplosion((Candy)secondCandy,_allCandies);
+        
+        _tileMover.TileBottomMovement(_allCandies);
+        
+    }
+    
+    
+    public void MoveSingleTileToBottom(int x, int y)
+    {
+        _allCandies[x, y].gameObject.transform.DOMove(new Vector2(x, y - 1), TWEEN_DURATION);
+        _allCandies[x, y].arrayPos = new Vector2(x, y-1);
+        _allCandies[x, y - 1] = _allCandies[x, y];
+        _allCandies[x, y] = null;
     }
 
 }

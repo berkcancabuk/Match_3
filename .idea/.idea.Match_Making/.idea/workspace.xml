@@ -6,18 +6,10 @@
   <component name="ChangeListManager">
     <list default="true" id="b0cc41e2-6aed-45d2-84e7-22a6101ff277" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Match_Making/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Match_Making/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Prefabs/BlueCandy.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Prefabs/BlueCandy.prefab" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Prefabs/EmptyCandy.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Prefabs/EmptyCandy.prefab" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Prefabs/GreenCandy.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Prefabs/GreenCandy.prefab" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Prefabs/PurpleCandy.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Prefabs/PurpleCandy.prefab" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Prefabs/RedCandy.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Prefabs/RedCandy.prefab" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Prefabs/TileBG.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Prefabs/TileBG.prefab" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/Board.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Board.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Candy.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Candy.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/MatchChecker.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/MatchChecker.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/Tile.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Tile.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Packages/manifest.json" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/manifest.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Packages/packages-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/packages-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/TileMover.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/TileMover.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -111,7 +103,7 @@
       <option name="presentableId" value="Default" />
       <updated>1706529235272</updated>
       <workItem from="1706529236413" duration="7751000" />
-      <workItem from="1706681803640" duration="10150000" />
+      <workItem from="1706681803640" duration="12494000" />
     </task>
     <servers />
   </component>
@@ -122,5 +114,37 @@
   <component name="UnityUnitTestConfiguration" currentTestLauncher="Both" />
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/Assets/Scripts/MatchChecker.cs</url>
+          <line>21</line>
+          <properties documentPath="C:\Users\berkcan.cabuk\Documents\GitHub\Match_Making\Assets\Scripts\MatchChecker.cs" initialLine="21" containingFunctionPresentation="Method 'CheckExplosion'">
+            <startOffsets>
+              <option value="470" />
+            </startOffsets>
+            <endOffsets>
+              <option value="485" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="27" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/Assets/Scripts/Board.cs</url>
+          <line>209</line>
+          <properties documentPath="C:\Users\berkcan.cabuk\Documents\GitHub\Match_Making\Assets\Scripts\Board.cs" initialLine="209" containingFunctionPresentation="Method 'MoveSingleTileToBottom'">
+            <startOffsets>
+              <option value="6756" />
+            </startOffsets>
+            <endOffsets>
+              <option value="6841" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="28" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>
