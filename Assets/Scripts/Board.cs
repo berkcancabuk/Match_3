@@ -206,14 +206,17 @@ public class Board : MonoBehaviour
         _matchChecker.CheckExplosion((Candy)secondCandy, _allCandies);
     }
 
-
+    public void MakeTileNull(int x, int y)
+    {
+        _allCandies[x, y] = null;
+    }
     public void MoveSingleTileToBottom(int x, int y)
     {
-        if (_allCandies[x, y].candyType == CandyType.Empty) return;
-        _allCandies[x, y].gameObject.transform.DOMove(new Vector2(x, y - 1), TWEEN_DURATION);
-        _allCandies[x, y].arrayPos = new Vector2(x, y - 1);
-        //_allCandies[x, y - 1] = _allCandies[x, y];
-        //_allCandies[x, y] = null;
-        //_allCandies[x, y].arrayPos = new Vector2(x, y);
+        if(_allCandies[x, y].candyType == CandyType.Empty) return;
+        _allCandies[x, y - 1] = _allCandies[x, y];
+        _allCandies[x, y - 1].gameObject.transform.DOMove(new Vector2(x, y - 1), TWEEN_DURATION);
+        _allCandies[x, y - 1].candyType = _allCandies[x, y].candyType;
+        _allCandies[x, y - 1].arrayPos = new Vector2(x, y - 1);
+        _allCandies[x, y] = null;
     }
 }

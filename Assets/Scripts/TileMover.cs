@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -10,7 +11,7 @@ public class TileMover
     private Tile[,] m_allCandies;
 
 
-    public void AddRange(List<Tile> queue, Tile[,] enu)
+    public void AddRange(Queue<Tile> queue, Tile[,] enu)
     {
         int rows = enu.GetLength(0);
         int columns = enu.GetLength(1);
@@ -19,7 +20,7 @@ public class TileMover
         {
             for (int j = 0; j < columns; j++)
             {
-                queue.Add(enu[i, j]);
+                queue.Enqueue(enu[i, j]);
             }
         }
         
@@ -27,25 +28,24 @@ public class TileMover
 
     public void TileBottomMovement(Tile[,] candies)
     {
-        List<Tile> m_candyQueue = new();
+        Queue<Tile> m_candyQueue = new();
         m_allCandies = candies;
         AddRange(m_candyQueue, m_allCandies);
-        for (int i = 0; i < m_candyQueue.Count; i++)
-        {
-            Tile t = m_candyQueue[i];
-            
-            
-            
+        while (m_candyQueue.Count > 0 )
+        { 
+            Tile t = m_candyQueue.Dequeue();
+
+            if (t == null || (int)t.arrayPos.y <= 0)
+                continue;
+
             int x = (int)t.arrayPos.x;
             int y = (int)t.arrayPos.y;
-            if (y <= 0)
-                continue;
             
             if (TileBottomCheck(x,y))
             {
+                Debug.Log("moving one tile down");
                 Board.Instance.MoveSingleTileToBottom(x,y);
-                //m_candyQueue.RemoveAt(i);
-                //m_candyQueue.Add(t);
+                m_candyQueue.Enqueue(t);
             }
         }
     }
@@ -53,7 +53,7 @@ public class TileMover
 
     private bool TileBottomCheck(int x, int y)
     {
-        if ( m_allCandies[x,y-1].candyType == CandyType.Empty)
+        if ( m_allCandies[x,y-1] == null)
         {
             return true;
         }

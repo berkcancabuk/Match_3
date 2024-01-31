@@ -57,20 +57,16 @@ public class MatchChecker : MonoBehaviour
     private void DestroyCandies(List<Tile> candies,Candy candys)
     {
         if (candies.Count <2) return;
+        if (candys.gameObject != null) candies.Add(candys);
+
         foreach (var candy in candies)
         {
             candy.candyType = CandyType.Empty;
+            Board.Instance.MakeTileNull((int)candy.arrayPos.x, (int)candy.arrayPos.y);
             Destroy(candy.gameObject);
         }
-        
-        if (candys.gameObject == null) return;
-        candys.candyType = CandyType.Empty;
-        Destroy(candys.gameObject);
+
         Board.Instance._tileMover.TileBottomMovement(Board.Instance._allCandies);
-        
-        
-        
-        
     }
     
     
