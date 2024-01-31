@@ -36,7 +36,6 @@ public class Board : MonoBehaviour
             DontDestroyOnLoad(this.gameObject);
         }
 
-        print(_tileMover);
         _matchChecker = GetComponent<MatchChecker>();
     }
 
@@ -101,13 +100,19 @@ public class Board : MonoBehaviour
     {
         if (obj1.gameObject == null || obj2.gameObject == null) return;
         if (obj1.candyType == CandyType.Empty  || obj2.candyType.Equals(CandyType.Empty))return;
+        
+        
+        
         var temp = obj1.arrayPos;
         obj1.arrayPos = obj2.arrayPos;
         obj2.arrayPos = temp;
         obj1.GetComponent<Candy>().text.text = String.Format("{0}-{1}",obj1.arrayPos.x, obj1.arrayPos.y);
         obj2.GetComponent<Candy>().text.text = String.Format("{0}-{1}",obj2.arrayPos.x, obj2.arrayPos.y);
+
+
+        var tempObj = obj1;
         _allCandies[(int)temp.x, (int)temp.y] = obj2;
-        _allCandies[(int)obj1.arrayPos.x, (int)obj1.arrayPos.y] = obj1;
+        _allCandies[(int)obj1.arrayPos.x, (int)obj1.arrayPos.y] = tempObj;
         
 
 
@@ -197,21 +202,19 @@ public class Board : MonoBehaviour
             case Direction.None:
                 throw new ArgumentOutOfRangeException(nameof(moveDir), moveDir, null);
         }
-        
+
         _matchChecker.CheckExplosion((Candy)candy,_allCandies);
         _matchChecker.CheckExplosion((Candy)secondCandy,_allCandies);
         
-        _tileMover.TileBottomMovement(_allCandies);
         
     }
     
     
     public void MoveSingleTileToBottom(int x, int y)
     {
+        if (_allCandies[x, y].candyType == CandyType.Empty) return;
+        
         _allCandies[x, y].gameObject.transform.DOMove(new Vector2(x, y - 1), TWEEN_DURATION);
-        _allCandies[x, y].arrayPos = new Vector2(x, y-1);
-        _allCandies[x, y - 1] = _allCandies[x, y];
-        _allCandies[x, y] = null;
     }
 
 }

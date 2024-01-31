@@ -62,11 +62,11 @@ public class MatchChecker : MonoBehaviour
             candy.candyType = CandyType.Empty;
             Destroy(candy.gameObject);
         }
-
+        
         if (candys.gameObject == null) return;
         candys.candyType = CandyType.Empty;
         Destroy(candys.gameObject);
-        
+        Board.Instance._tileMover.TileBottomMovement(Board.Instance._allCandies);
         
         
         
