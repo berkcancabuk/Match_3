@@ -55,6 +55,7 @@ public class Board : MonoBehaviour
                 var tempPosition = new Vector2(i, j);
                 var backGroundTile = Instantiate(tilePrefab, tempPosition, Quaternion.identity, parentTile);
                 _allBackGround[i, j] = backGroundTile.GetComponent<Tile>();
+                
             }
         }
 
@@ -75,7 +76,8 @@ public class Board : MonoBehaviour
                         Quaternion.identity, parentCandy);
 
                     _allCandies[j, i] = candy.GetComponent<Tile>();
-                    candy.GetComponent<Tile>().arrayPos = new Vector2(j, i);
+                    _allCandies[j, i].arrayPos = new Vector2(j, i);
+                    _allCandies[j, i].GetComponent<Candy>().text.text = j + "-" + i;
                     MoveCandy(candy.transform, i, j);
                 }
             }
@@ -95,11 +97,16 @@ public class Board : MonoBehaviour
 
     private async Task Swap(Tile obj1, Tile obj2)
     {
+        if (obj1.gameObject == null || obj2.gameObject == null) return;
+        if (obj1.candyType == CandyType.Empty  || obj2.candyType.Equals(CandyType.Empty))return;
         var temp = obj1.arrayPos;
         obj1.arrayPos = obj2.arrayPos;
-        _allCandies[(int)temp.x, (int)temp.y] = obj2;
-        _allCandies[(int)obj2.arrayPos.x, (int)obj2.arrayPos.y] = obj1;
         obj2.arrayPos = temp;
+        obj1.GetComponent<Candy>().text.text = String.Format("{0}-{1}",obj1.arrayPos.x, obj1.arrayPos.y);
+        obj2.GetComponent<Candy>().text.text = String.Format("{0}-{1}",obj2.arrayPos.x, obj2.arrayPos.y);
+        _allCandies[(int)temp.x, (int)temp.y] = obj2;
+        _allCandies[(int)obj1.arrayPos.x, (int)obj1.arrayPos.y] = obj1;
+        
 
 
         var sequence = DOTween.Sequence();
@@ -142,11 +149,14 @@ public class Board : MonoBehaviour
         // Maybe make pos taker to int
         int x = (int)pos.x;
         int y = (int)pos.y;
-
-        //_allCandies[x, y] = _allBackGround[x, y];
-
-        _allCandies[x, y] = (Tile)Instantiate(_emptyCandy, new Vector2(x,y),
-                        Quaternion.identity, parentCandy).GetComponent<Candy>();
+        
+        
+        
+        _allCandies[x, y] = Instantiate(_emptyCandy, new Vector2(x,y),
+                        Quaternion.identity, parentCandy).GetComponent<Tile>();
+        _allCandies[x, y].candyType = CandyType.Empty;
+        _allCandies[x, y].arrayPos = new Vector2(x, y);
+        _allCandies[x,y].GetComponent<Candy>().text.text = x+"  "+y;
     }
 
     public async Task TileSwapCheck(Vector2 pos, Direction moveDir)
@@ -155,25 +165,30 @@ public class Board : MonoBehaviour
         var y = (int)pos.y;
         Tile candy = _allCandies[x, y];
         Tile secondCandy = null;
+        
         switch (moveDir)
         {
             case Direction.Left:
                 if (x - 1 < 0) return;
+                if (_allCandies[x, y].gameObject == null ||_allCandies[x - 1, y].gameObject == null) return;
                 await Swap(_allCandies[x, y], _allCandies[x - 1, y]);
                 secondCandy = _allCandies[x, y];
                 break;
             case Direction.Up:
                 if (y + 1 > column+1) return;
+                if (_allCandies[x, y].gameObject == null ||_allCandies[x , y+1].gameObject == null) return;
                 await Swap(_allCandies[x, y], _allCandies[x, y + 1]);
                 secondCandy = _allCandies[x, y];
                 break;
             case Direction.Right:
                 if (x + 1 > row) return;
+                if (_allCandies[x, y].gameObject == null ||_allCandies[x +1, y].gameObject == null) return;
                 await Swap(_allCandies[x, y], _allCandies[x + 1, y]);
                 secondCandy = _allCandies[x, y];
                 break;
             case Direction.Down:
                 if (y - 1 < 0) return;
+                if (_allCandies[x, y].gameObject == null ||_allCandies[x, y-1].gameObject == null) return;
                 await Swap(_allCandies[x, y], _allCandies[x, y - 1]);
                 secondCandy = _allCandies[x, y];
                 break;
@@ -181,7 +196,6 @@ public class Board : MonoBehaviour
                 throw new ArgumentOutOfRangeException(nameof(moveDir), moveDir, null);
         }
         
-        print((Candy)candy + " name" );
         _matchChecker.CheckExplosion((Candy)candy,_allCandies);
         _matchChecker.CheckExplosion((Candy)secondCandy,_allCandies);
     }

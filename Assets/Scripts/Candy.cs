@@ -1,5 +1,6 @@
 ﻿using DG.Tweening;
 using System.Threading.Tasks;
+using TMPro;
 using UnityEngine;
 
 public class Candy : Tile
@@ -14,6 +15,8 @@ public class Candy : Tile
 
     Vector3 _mousePosition;
 
+    public TextMeshProUGUI text;
+
 
     public CandyType GetCandyType()
     {
@@ -26,6 +29,7 @@ public class Candy : Tile
         Debug.Log("On begin Drag");
         _draggingStarted = true;
         _startPos = _mousePosition;
+        print(arrayPos);
         Board.Instance.selectedObject = arrayPos;
     }
 
@@ -57,6 +61,7 @@ public class Candy : Tile
             {
                 _direction = Direction.None;
             }
+            print(_direction);
         }
     }
 
