@@ -43,14 +43,14 @@ public class MatchChecker : MonoBehaviour
         //ConditionLoop(candies,x,0,1, 1,ref xArray);
         // Right
         int xCheck = x;
-        while (xCheck < candies.GetLength(0)-1 && candies[xCheck + 1, y].candyType == candy.candyType)
+        while (xCheck < candies.GetLength(0) - 1 && candies[xCheck + 1, y].candyType == candy.candyType)
         {
             print(candies[xCheck + 1, y].name);
             xArray.Add(candies[xCheck + 1, y]);
             xCheck++;
             _counterX++;
         }
-    
+
         //Left
         xCheck = x;
         while (xCheck > 0 && candies[xCheck - 1, y].candyType == candy.candyType)
@@ -89,7 +89,7 @@ public class MatchChecker : MonoBehaviour
         {
             DestroyCandies(yArray);
     
-            if (candy !=null)
+            if (candy != null)
             {
                 Destroy(candy.gameObject);
             }
@@ -101,6 +101,8 @@ public class MatchChecker : MonoBehaviour
     {
         foreach (var candy in candies)
         {
+            Board.Instance.MakeCandyEmpty(candy.arrayPos);
+            // Need to check with empty 
             Destroy(candy.gameObject);
         }
     }

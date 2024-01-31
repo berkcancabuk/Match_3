@@ -62,14 +62,10 @@ public class Candy : Tile
 
     private void OnMouseUp()
     {
-        
-      
-
         _startPos = Vector2.zero;
         _endPos = Vector2.zero;
         _draggingStarted = false;
-        
-        
+      
         Board.Instance.TileSwapCheck(Board.Instance.selectedObject, _direction);
     }
 }

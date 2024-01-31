@@ -19,7 +19,7 @@ public class Board : MonoBehaviour
     private Sequence _mySequence = DOTween.Sequence();
     [SerializeField] private Transform parentCandy, parentTile;
     [SerializeField] private GameObject[] candies;
-
+    [SerializeField] private GameObject _emptyCandy;
 
     public Vector2 selectedObject;
 
@@ -109,6 +109,45 @@ public class Board : MonoBehaviour
         await sequence.Play().AsyncWaitForCompletion();
     }
 
+    public bool CheckBottomIfEmpty(Vector2 pos)
+    {
+        int x = (int)pos.x;
+        int y = (int)pos.y;
+
+        if (x.Equals(0)) { return false; }
+
+        return _allCandies[x, y - 1].candyType == CandyType.Empty;
+    }
+
+    [ContextMenu("TEST MOVE BOTTOM")]
+    private void MoveCandiesBottom()
+    {
+        foreach (var item in _allCandies)
+        {
+            if (item.candyType.Equals(CandyType.Empty))
+            {
+                continue;
+            }
+
+
+            if (CheckBottomIfEmpty(item.arrayPos))
+            {
+                TileSwapCheck(item.arrayPos, Direction.Down);
+            }
+        }
+    }
+
+    public void MakeCandyEmpty(Vector2 pos)
+    {
+        // Maybe make pos taker to int
+        int x = (int)pos.x;
+        int y = (int)pos.y;
+
+        //_allCandies[x, y] = _allBackGround[x, y];
+
+        _allCandies[x, y] = (Tile)Instantiate(_emptyCandy, new Vector2(x,y),
+                        Quaternion.identity, parentCandy).GetComponent<Candy>();
+    }
 
     public async Task TileSwapCheck(Vector2 pos, Direction moveDir)
     {
