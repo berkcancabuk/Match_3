@@ -32,8 +32,8 @@ public class TileMover
             {
 
                 // Move single candy from board
-                t.arrayPos = new Vector2(x, y - 1);
-
+                //t.arrayPos = new Vector2(x, y - 1);
+                Board.Instance.MoveSingleTileToBottom(x, y);
                 m_candyQueue.Enqueue(t);
             }
             
