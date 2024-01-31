@@ -10,7 +10,7 @@ public class MatchChecker : MonoBehaviour
     readonly List<Tile> yArray = new();
 
 
-    public void CheckExplosion(Candy candy, Tile[,] candies)
+    public bool CheckExplosion(Candy candy, Tile[,] candies)
     {
         xArray.Clear();
         yArray.Clear();
@@ -20,7 +20,7 @@ public class MatchChecker : MonoBehaviour
         
         // Right
         int xCheck = x;
-        while (xCheck < candies.GetLength(0) - 1 && candies[xCheck + 1, y].candyType == candy.candyType)
+        while (xCheck < candies.GetLength(0) - 1 && candies[xCheck + 1, y] != null && candies[xCheck + 1, y].candyType == candy.candyType)
         {
             xArray.Add(candies[xCheck + 1, y]);
             xCheck++;
@@ -28,30 +28,34 @@ public class MatchChecker : MonoBehaviour
         
         //Left
         xCheck = x;
-        while (xCheck > 0 && candies[xCheck - 1, y].candyType == candy.candyType)
+        while (xCheck > 0 && candies[xCheck - 1, y] != null && candies[xCheck - 1, y].candyType == candy.candyType)
         {
             xArray.Add(candies[xCheck - 1, y]);
             xCheck--;
         }
         
         int yCheck = y;
-        while (yCheck < candies.GetLength(1)-1 && candies[x, yCheck+1].candyType == candy.candyType)
+        while (yCheck < candies.GetLength(1)-1 && candies[x, yCheck+1] != null && candies[x, yCheck+1].candyType == candy.candyType)
         {
             yArray.Add(candies[x , yCheck+1]);
             yCheck++;
         }
         
         yCheck = y;
-        while (yCheck > 0 && candies[x, yCheck-1].candyType == candy.candyType)
+        while (yCheck > 0 && candies[x, yCheck-1] != null && candies[x, yCheck-1].candyType == candy.candyType)
         {
             yArray.Add(candies[x, yCheck-1]);
             yCheck--;
         }
+
+        if (xArray.Count < 2 && yArray.Count < 2)
+            return false;
         
         DestroyCandies(xArray,candy);
         DestroyCandies(yArray,candy);
-        
-        
+
+        return true;
+
     }
     
     private void DestroyCandies(List<Tile> candies,Candy candys)

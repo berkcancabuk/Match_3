@@ -202,8 +202,11 @@ public class Board : MonoBehaviour
                 throw new ArgumentOutOfRangeException(nameof(moveDir), moveDir, null);
         }
 
-        _matchChecker.CheckExplosion((Candy)candy, _allCandies);
-        _matchChecker.CheckExplosion((Candy)secondCandy, _allCandies);
+        if (!_matchChecker.CheckExplosion((Candy)candy, _allCandies) && !_matchChecker.CheckExplosion((Candy)secondCandy, _allCandies))
+        {
+            // Swap back
+           await Swap(candy, secondCandy);
+        }
     }
 
     public void MakeTileNull(int x, int y)
