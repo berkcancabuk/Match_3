@@ -6,31 +6,14 @@ public class MatchChecker : MonoBehaviour
 {
     private Board _board = Board.Instance;
 
-    List<Tile> xArray = new();
-    List<Tile> yArray = new();
+    readonly List<Tile> xArray = new();
+    readonly List<Tile> yArray = new();
 
-    private Candy currentCandy;
-
-    // private void ConditionLoop(Tile[,] candies, int position,int checkPosX, int dimension,int checkPosY, int dimensionDecrease,int positionAddition,ref List<Tile> tiles)
-    // {
-    //     while (BoundsCheck(candies, dimension,position,dimensionDecrease) && candies[checkPosX, checkPosY ].candyType == currentCandy.candyType)
-    //     {
-    //         print(candies[checkPosX , checkPosY].name);
-    //         tiles.Add(candies[checkPosX, checkPosY]);
-    //         position += positionAddition;
-    //     }
-    // }
-    //
-    // private bool BoundsCheck(Tile[,] array,int dimension, int position,int dimensionDecrease)
-    // {
-    //     return dimension == -1 ? position > 0 : position + 1 < array.GetLength(dimension)-dimensionDecrease;
-    // }
 
     public void CheckExplosion(Candy candy, Tile[,] candies)
     {
         xArray.Clear();
         yArray.Clear();
-        currentCandy = candy;
         var x = (int)candy.arrayPos.x;
         var y = (int)candy.arrayPos.y;
     
@@ -76,11 +59,18 @@ public class MatchChecker : MonoBehaviour
         if (candies.Count <2) return;
         foreach (var candy in candies)
         {
+            candy.candyType = CandyType.Empty;
             Destroy(candy.gameObject);
         }
 
         if (candys.gameObject == null) return;
+        candys.candyType = CandyType.Empty;
         Destroy(candys.gameObject);
+        
+        
+        
+        
+        
     }
     
     
