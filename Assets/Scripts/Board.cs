@@ -63,14 +63,14 @@ public class Board : MonoBehaviour
     }
 
 
-    private async Task FillEmptyTile()
+    public async Task FillEmptyTile()
     {
         for (int i = 0; i < row; i++)
         {
             _mySequence = DOTween.Sequence();
             for (int j = 0; j < column; j++)
             {
-                if (_allBackGround[j, i]?.candyType == CandyType.Empty)
+                if (_allCandies[j,i] == null)
                 {
                     var candy = Instantiate(candies[Random.Range(0, candies.Length)], new Vector2(j, row + 1),
                         Quaternion.identity, parentCandy);

@@ -48,6 +48,8 @@ public class TileMover
                 m_candyQueue.Enqueue(t);
             }
         }
+
+        Board.Instance.FillEmptyTile();
     }
 
 
