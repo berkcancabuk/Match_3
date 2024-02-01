@@ -97,5 +97,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c7c035c1392dce4fbde1c14ba4ac548, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  candyType: 4
+  candyType: 5
   arrayPos: {x: 0, y: 0}
+  _particles: {fileID: 0}

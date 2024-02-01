@@ -6,6 +6,7 @@ namespace Enums
         Blue,
         Purple,
         Red,
+        Exploding,
         Empty
     }
 

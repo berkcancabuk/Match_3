@@ -115,7 +115,7 @@ GameObject:
   - component: {fileID: -7666457695360571273}
   - component: {fileID: 7893336162236739579}
   m_Layer: 0
-  m_Name: EmptyCandy
+  m_Name: ExplodingCandy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -246,9 +246,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0726e9761e30d7141a63c520c2602540, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  candyType: 5
+  candyType: 4
   arrayPos: {x: 0, y: 0}
-  _particles: {fileID: 0}
   text: {fileID: 8561431864315221318}
 --- !u!1 &4844413370384600812
 GameObject:

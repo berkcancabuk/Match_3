@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Abstracts;
 using Enums;
@@ -15,16 +16,31 @@ public class MatchChecker : MonoBehaviour
 
         int dimensionLength = dimension == -1 ? -1 : candies.GetLength(dimension);
 
-
-        while (BoundControl(mainPos, dimensionLength) 
-            && candies[coordinates[0] + increase[0], coordinates[1] +increase[1]] != null 
-            && candies[coordinates[0] + increase[0], coordinates[1] + increase[1]].candyType == type)
+        if (type.Equals(CandyType.Exploding))
         {
-            mainPos += increase[0].Equals(0) ? increase[1] : increase[0];
-            arrayToAdd.Add(candies[coordinates[0] + increase[0], coordinates[1] + increase[1]]);
-            coordinates[0] += increase[0];
-            coordinates[1] += increase[1];
-            await Task.Delay(0);
+            while (BoundControl(mainPos, dimensionLength)
+                && candies[coordinates[0] + increase[0], coordinates[1] + increase[1]] != null
+                && !candies[coordinates[0] + increase[0], coordinates[1] + increase[1]].candyType.Equals(CandyType.Empty))
+            {
+                mainPos += increase[0].Equals(0) ? increase[1] : increase[0];
+                arrayToAdd.Add(candies[coordinates[0] + increase[0], coordinates[1] + increase[1]]);
+                coordinates[0] += increase[0];
+                coordinates[1] += increase[1];
+                await Task.Delay(0);
+            }
+        }
+        else
+        {
+            while (BoundControl(mainPos, dimensionLength)
+                && candies[coordinates[0] + increase[0], coordinates[1] + increase[1]] != null
+                && candies[coordinates[0] + increase[0], coordinates[1] + increase[1]].candyType == type)
+            {
+                mainPos += increase[0].Equals(0) ? increase[1] : increase[0];
+                arrayToAdd.Add(candies[coordinates[0] + increase[0], coordinates[1] + increase[1]]);
+                coordinates[0] += increase[0];
+                coordinates[1] += increase[1];
+                await Task.Delay(0);
+            }
         }
 
     }
@@ -51,6 +67,15 @@ public class MatchChecker : MonoBehaviour
 
         if (xArray.Count < 2 && yArray.Count < 2)
             return false;
+
+        //if (xArray.Count >= 2 && yArray.Count >= 2)
+        //{
+        //    xArray.Add(candy);
+        //    //xArray.Concat(yArray);
+        //    xArray.AddRange(yArray);
+        //    await DestroyCandies(xArray, null);
+        //    return true;
+        //}
 
         await DestroyCandies(xArray, candy);
         await DestroyCandies(yArray, candy);
