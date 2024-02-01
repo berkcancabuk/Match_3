@@ -5,7 +5,9 @@ using UnityEngine.Serialization;
 public class SoundManager : MonoBehaviour
 {
     [SerializeField] private AudioSource audioSource;
+    [SerializeField] private AudioSource audioSourceMainMusic;
     [SerializeField] private AudioClip audioClip;
+    [SerializeField] private AudioClip audioClipMainMusic;
 
 
     private void PlayAudio()
@@ -16,6 +18,8 @@ public class SoundManager : MonoBehaviour
 
     private void OnEnable()
     {
+        audioSourceMainMusic.clip = audioClipMainMusic;
+        audioSourceMainMusic.Play();
         EventManager.OnPlaySound += PlayAudio;
     }
 
