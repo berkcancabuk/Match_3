@@ -10,43 +10,76 @@ public class MatchChecker : MonoBehaviour
     readonly List<Tile> yArray = new();
 
 
+    private void ConditionLoop(Tile[,] candies, List<Tile> arrayToAdd, int[] coordinates, int mainPos, int[] increase, int dimension)
+    {
+        var type = candies[coordinates[0], coordinates[1]].candyType;
+
+        int dimensionLength = dimension == -1 ? -1 : candies.GetLength(dimension);
+
+
+        while (BoundControl(mainPos, dimensionLength) 
+            && candies[coordinates[0] + increase[0], coordinates[1] +increase[1]] != null 
+            && candies[coordinates[0] + increase[0], coordinates[1] + increase[1]].candyType == type)
+        {
+            mainPos += increase[0].Equals(0) ? increase[1] : increase[0];
+            arrayToAdd.Add(candies[coordinates[0] + increase[0], coordinates[1] + increase[1]]);
+            coordinates[0] += increase[0];
+            coordinates[1] += increase[1];
+        }
+
+    }
+
+
+    private bool BoundControl(int pos, int dimension)
+    {
+        //First one pos > 0 ===> xCheck > 0 && candies[xCheck - 1, y
+        //Second one  =====> xCheck > 0 && candies[xCheck - 1, y
+        return dimension == -1 ? pos > 0 : pos < dimension - 1;
+        
+    }
+
+
+
     public bool CheckExplosion(Candy candy, Tile[,] candies)
     {
         xArray.Clear();
         yArray.Clear();
         var x = (int)candy.arrayPos.x;
         var y = (int)candy.arrayPos.y;
-    
-        
+
+        ConditionLoop(candies, xArray,new int[] { x, y}, x, new int[]{ 1, 0}, 0 );
+        ConditionLoop(candies, xArray, new int[] { x, y }, x, new int[] { -1, 0 }, -1);
+        ConditionLoop(candies, yArray, new int[] { x, y }, y, new int[] { 0, 1 }, 1);
+        ConditionLoop(candies, yArray, new int[] { x, y }, y, new int[] { 0, -1 }, -1);
         // Right
         int xCheck = x;
-        while (xCheck < candies.GetLength(0) - 1 && candies[xCheck + 1, y] != null && candies[xCheck + 1, y].candyType == candy.candyType)
-        {
-            xArray.Add(candies[xCheck + 1, y]);
-            xCheck++;
-        }
+        //while (xCheck < candies.GetLength(0) - 1 && candies[xCheck + 1, y] != null && candies[xCheck + 1, y].candyType == candy.candyType)
+        //{
+        //    xArray.Add(candies[xCheck + 1, y]);
+        //    xCheck++;
+        //}
         
         //Left
-        xCheck = x;
-        while (xCheck > 0 && candies[xCheck - 1, y] != null && candies[xCheck - 1, y].candyType == candy.candyType)
-        {
-            xArray.Add(candies[xCheck - 1, y]);
-            xCheck--;
-        }
+        //xCheck = x;
+        //while (xCheck > 0 && candies[xCheck - 1, y] != null && candies[xCheck - 1, y].candyType == candy.candyType)
+        //{
+        //    xArray.Add(candies[xCheck - 1, y]);
+        //    xCheck--;
+        //}
         
-        int yCheck = y;
-        while (yCheck < candies.GetLength(1)-1 && candies[x, yCheck+1] != null && candies[x, yCheck+1].candyType == candy.candyType)
-        {
-            yArray.Add(candies[x , yCheck+1]);
-            yCheck++;
-        }
+        //int yCheck = y;
+        //while (yCheck < candies.GetLength(1)-1 && candies[x, yCheck+1] != null && candies[x, yCheck+1].candyType == candy.candyType)
+        //{
+        //    yArray.Add(candies[x , yCheck+1]);
+        //    yCheck++;
+        //}
         
-        yCheck = y;
-        while (yCheck > 0 && candies[x, yCheck-1] != null && candies[x, yCheck-1].candyType == candy.candyType)
-        {
-            yArray.Add(candies[x, yCheck-1]);
-            yCheck--;
-        }
+        //yCheck = y;
+        //while (yCheck > 0 && candies[x, yCheck-1] != null && candies[x, yCheck-1].candyType == candy.candyType)
+        //{
+        //    yArray.Add(candies[x, yCheck-1]);
+        //    yCheck--;
+        //}
 
         if (xArray.Count < 2 && yArray.Count < 2)
             return false;
