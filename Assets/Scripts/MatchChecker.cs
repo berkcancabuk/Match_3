@@ -38,8 +38,6 @@ public class MatchChecker : MonoBehaviour
         
     }
 
-
-
     public bool CheckExplosion(Candy candy, Tile[,] candies)
     {
         xArray.Clear();
@@ -51,35 +49,6 @@ public class MatchChecker : MonoBehaviour
         ConditionLoop(candies, xArray, new int[] { x, y }, x, new int[] { -1, 0 }, -1);
         ConditionLoop(candies, yArray, new int[] { x, y }, y, new int[] { 0, 1 }, 1);
         ConditionLoop(candies, yArray, new int[] { x, y }, y, new int[] { 0, -1 }, -1);
-        // Right
-        int xCheck = x;
-        //while (xCheck < candies.GetLength(0) - 1 && candies[xCheck + 1, y] != null && candies[xCheck + 1, y].candyType == candy.candyType)
-        //{
-        //    xArray.Add(candies[xCheck + 1, y]);
-        //    xCheck++;
-        //}
-        
-        //Left
-        //xCheck = x;
-        //while (xCheck > 0 && candies[xCheck - 1, y] != null && candies[xCheck - 1, y].candyType == candy.candyType)
-        //{
-        //    xArray.Add(candies[xCheck - 1, y]);
-        //    xCheck--;
-        //}
-        
-        //int yCheck = y;
-        //while (yCheck < candies.GetLength(1)-1 && candies[x, yCheck+1] != null && candies[x, yCheck+1].candyType == candy.candyType)
-        //{
-        //    yArray.Add(candies[x , yCheck+1]);
-        //    yCheck++;
-        //}
-        
-        //yCheck = y;
-        //while (yCheck > 0 && candies[x, yCheck-1] != null && candies[x, yCheck-1].candyType == candy.candyType)
-        //{
-        //    yArray.Add(candies[x, yCheck-1]);
-        //    yCheck--;
-        //}
 
         if (xArray.Count < 2 && yArray.Count < 2)
             return false;

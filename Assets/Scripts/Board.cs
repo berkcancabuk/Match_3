@@ -16,7 +16,7 @@ public class Board : MonoBehaviour
     public Tile[,] _allCandies;
 
 
-    private Sequence _mySequence = DOTween.Sequence();
+    private Sequence _mySequence;
     [SerializeField] private Transform parentCandy, parentTile;
     [SerializeField] private GameObject[] candies;
     [SerializeField] private GameObject _emptyCandy;
@@ -35,7 +35,7 @@ public class Board : MonoBehaviour
             Instance = this;
             DontDestroyOnLoad(this.gameObject);
         }
-
+        _mySequence = DOTween.Sequence();
         _matchChecker = GetComponent<MatchChecker>();
     }
 
@@ -133,38 +133,6 @@ public class Board : MonoBehaviour
         return _allCandies[x, y - 1].candyType == CandyType.Empty;
     }
 
-    [ContextMenu("TEST MOVE BOTTOM")]
-    private void MoveCandiesBottom()
-    {
-        foreach (var item in _allCandies)
-        {
-            if (item.candyType.Equals(CandyType.Empty))
-            {
-                continue;
-            }
-
-
-            if (CheckBottomIfEmpty(item.arrayPos))
-            {
-                TileSwapCheck(item.arrayPos, Direction.Down);
-            }
-        }
-    }
-
-    public void MakeCandyEmpty(Vector2 pos)
-    {
-        // Maybe make pos taker to int
-        int x = (int)pos.x;
-        int y = (int)pos.y;
-
-
-        _allCandies[x, y] = Instantiate(_emptyCandy, new Vector2(x, y),
-            Quaternion.identity, parentCandy).GetComponent<Tile>();
-        _allCandies[x, y].candyType = CandyType.Empty;
-        _allCandies[x, y].arrayPos = new Vector2(x, y);
-        _allCandies[x, y].GetComponent<Candy>().text.text = x + "  " + y;
-    }
-
     public async Task TileSwapCheck(Vector2 pos, Direction moveDir)
     {
         var x = (int)pos.x;
@@ -202,7 +170,11 @@ public class Board : MonoBehaviour
                 throw new ArgumentOutOfRangeException(nameof(moveDir), moveDir, null);
         }
 
-        if (!_matchChecker.CheckExplosion((Candy)candy, _allCandies) && !_matchChecker.CheckExplosion((Candy)secondCandy, _allCandies))
+        // Should change it 
+        // When given in the if condition it DOES NOT check both of the candies
+        bool condition1 = !_matchChecker.CheckExplosion((Candy)candy, _allCandies);
+        bool condition2 = !_matchChecker.CheckExplosion((Candy)secondCandy, _allCandies);
+        if (condition1 && condition2)
         {
             // Swap back
            await Swap(candy, secondCandy);
