@@ -1,6 +1,6 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 
@@ -26,7 +26,7 @@ public class TileMover
         
     }
 
-    public void TileBottomMovement(Tile[,] candies)
+    public async Task TileBottomMovement(Tile[,] candies)
     {
         Queue<Tile> m_candyQueue = new();
         m_allCandies = candies;
@@ -43,13 +43,14 @@ public class TileMover
             
             if (TileBottomCheck(x,y))
             {
-                Debug.Log("moving one tile down");
                 Board.Instance.MoveSingleTileToBottom(x,y);
                 m_candyQueue.Enqueue(t);
             }
         }
 
-        Board.Instance.FillEmptyTile();
+        await Task.Delay(0);
+
+        await Board.Instance.FillEmptyTile();
     }
 
 

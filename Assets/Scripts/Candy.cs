@@ -61,7 +61,6 @@ public class Candy : Tile
             {
                 _direction = Direction.None;
             }
-            print(_direction);
         }
     }
 

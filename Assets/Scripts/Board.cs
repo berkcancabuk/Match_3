@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using DG.Tweening;
 using UnityEngine;
@@ -23,6 +24,9 @@ public class Board : MonoBehaviour
 
     public TileMover _tileMover = new();
     public Vector2 selectedObject;
+
+    private bool _isInit;
+    private List<Tile> _explotionCheckCandies =  new();
 
     private void Awake()
     {
@@ -65,6 +69,7 @@ public class Board : MonoBehaviour
 
     public async Task FillEmptyTile()
     {
+        _explotionCheckCandies.Clear();
         for (int i = 0; i < row; i++)
         {
             _mySequence = DOTween.Sequence();
@@ -78,11 +83,23 @@ public class Board : MonoBehaviour
                     _allCandies[j, i] = candy.GetComponent<Tile>();
                     _allCandies[j, i].arrayPos = new Vector2(j, i);
                     _allCandies[j, i].GetComponent<Candy>().text.text = j + "-" + i;
+                    _explotionCheckCandies.Add(_allCandies[j,i]);
                     MoveCandy(candy.transform, i, j);
                 }
             }
 
             await _mySequence.Play().AsyncWaitForCompletion();
+   
+        }
+        if (!_isInit)
+        {
+            _isInit = true;
+            return;  
+        }
+
+        foreach (var item in _allCandies)
+        {
+            await _matchChecker.CheckExplosion(item.GetComponent<Candy>(), _allCandies);
         }
     }
 
@@ -172,8 +189,8 @@ public class Board : MonoBehaviour
 
         // Should change it 
         // When given in the if condition it DOES NOT check both of the candies
-        bool condition1 = !_matchChecker.CheckExplosion((Candy)candy, _allCandies);
-        bool condition2 = !_matchChecker.CheckExplosion((Candy)secondCandy, _allCandies);
+        bool condition1 = !await _matchChecker.CheckExplosion((Candy)candy, _allCandies);
+        bool condition2 = !await _matchChecker.CheckExplosion((Candy)secondCandy, _allCandies);
         if (condition1 && condition2)
         {
             // Swap back
@@ -193,5 +210,6 @@ public class Board : MonoBehaviour
         _allCandies[x, y - 1].candyType = _allCandies[x, y].candyType;
         _allCandies[x, y - 1].arrayPos = new Vector2(x, y - 1);
         _allCandies[x, y] = null;
+        //await _matchChecker.CheckExplosion(_allCandies[x, y - 1].GetComponent<Candy>(), _allCandies);
     }
 }

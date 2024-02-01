@@ -1,16 +1,16 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 public class MatchChecker : MonoBehaviour
 {
-    private Board _board = Board.Instance;
 
     readonly List<Tile> xArray = new();
     readonly List<Tile> yArray = new();
 
 
-    private void ConditionLoop(Tile[,] candies, List<Tile> arrayToAdd, int[] coordinates, int mainPos, int[] increase, int dimension)
+    private async Task ConditionLoop(Tile[,] candies, List<Tile> arrayToAdd, int[] coordinates, int mainPos, int[] increase, int dimension)
     {
         var type = candies[coordinates[0], coordinates[1]].candyType;
 
@@ -38,29 +38,28 @@ public class MatchChecker : MonoBehaviour
         
     }
 
-    public bool CheckExplosion(Candy candy, Tile[,] candies)
+    public async Task<bool> CheckExplosion(Candy candy, Tile[,] candies)
     {
         xArray.Clear();
         yArray.Clear();
         var x = (int)candy.arrayPos.x;
         var y = (int)candy.arrayPos.y;
 
-        ConditionLoop(candies, xArray,new int[] { x, y}, x, new int[]{ 1, 0}, 0 );
-        ConditionLoop(candies, xArray, new int[] { x, y }, x, new int[] { -1, 0 }, -1);
-        ConditionLoop(candies, yArray, new int[] { x, y }, y, new int[] { 0, 1 }, 1);
-        ConditionLoop(candies, yArray, new int[] { x, y }, y, new int[] { 0, -1 }, -1);
+        await ConditionLoop(candies, xArray, new int[] { x, y }, x, new int[] { 1, 0 }, 0);
+        await ConditionLoop(candies, xArray, new int[] { x, y }, x, new int[] { -1, 0 }, -1);
+        await ConditionLoop(candies, yArray, new int[] { x, y }, y, new int[] { 0, 1 }, 1);
+        await ConditionLoop(candies, yArray, new int[] { x, y }, y, new int[] { 0, -1 }, -1);
 
         if (xArray.Count < 2 && yArray.Count < 2)
             return false;
-        
-        DestroyCandies(xArray,candy);
-        DestroyCandies(yArray,candy);
+
+        await DestroyCandies(xArray, candy);
+        await DestroyCandies(yArray, candy);
 
         return true;
-
     }
     
-    private void DestroyCandies(List<Tile> candies,Candy candys)
+    private async Task DestroyCandies(List<Tile> candies,Candy candys)
     {
         if (candies.Count <2) return;
         if (candys.gameObject != null) candies.Add(candys);
@@ -70,9 +69,10 @@ public class MatchChecker : MonoBehaviour
             candy.candyType = CandyType.Empty;
             Board.Instance.MakeTileNull((int)candy.arrayPos.x, (int)candy.arrayPos.y);
             Destroy(candy.gameObject);
+            await Task.Delay(0);
         }
 
-        Board.Instance._tileMover.TileBottomMovement(Board.Instance._allCandies);
+        await Board.Instance._tileMover.TileBottomMovement(Board.Instance._allCandies);
     }
     
     
