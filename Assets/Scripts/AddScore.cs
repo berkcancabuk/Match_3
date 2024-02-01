@@ -7,8 +7,6 @@ public class AddScore : MonoBehaviour
     void DisplayScore(int index)
     {
         _uiManager.score+=index;
-        print(index);
-        print(_uiManager.score);
         _uiManager.scoreText.text = (_uiManager.score).ToString();
     }
 

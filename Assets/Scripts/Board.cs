@@ -98,9 +98,13 @@ public class Board : MonoBehaviour
 
         foreach (var item in _allCandies)
         {
-            await _matchChecker.CheckExplosion(item.GetComponent<Candy>(), _allCandies);
+            if (await _matchChecker.CheckExplosion(item.GetComponent<Candy>(), _allCandies))
+            {
+                await Task.Delay(400);
+                await _tileMover.TileBottomMovement(_allCandies);
+            }
         }
-        await _tileMover.TileBottomMovement(_allCandies);
+        
     }
 
 
@@ -116,12 +120,7 @@ public class Board : MonoBehaviour
     {
         if (obj1.gameObject == null || obj2.gameObject == null) return;
         if (obj1.candyType == CandyType.Empty || obj2.candyType.Equals(CandyType.Empty)) return;
-
-
-        //var temp = obj1.arrayPos;
-        //obj1.arrayPos = obj2.arrayPos;
-        //obj2.arrayPos = temp;
-        // Tuple switching
+        
 
         (obj2.arrayPos, obj1.arrayPos) = (obj1.arrayPos, obj2.arrayPos);
 
@@ -193,13 +192,14 @@ public class Board : MonoBehaviour
         // When given in the if condition it DOES NOT check both of the candies
         bool condition1 = !await _matchChecker.CheckExplosion((Candy)candy, _allCandies);
         bool condition2 = !await _matchChecker.CheckExplosion((Candy)secondCandy, _allCandies);
-        await Task.Delay(400);
-        await _tileMover.TileBottomMovement(_allCandies);
         if (condition1 && condition2)
         {
             // Swap back
            await Swap(candy, secondCandy);
         }
+        print("tileswapa girdi");
+        await Task.Delay(400);
+        await _tileMover.TileBottomMovement(_allCandies);
     }
 
     public void MakeTileNull(int x, int y)

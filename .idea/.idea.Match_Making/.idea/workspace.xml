@@ -5,31 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b0cc41e2-6aed-45d2-84e7-22a6101ff277" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/AddScore.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/AddScore.cs.meta" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Match_Making/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Match_Making/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/2D Casual UI.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/2D Casual UI/Original Artwork.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/2D Casual UI/Original Artwork/GUI.psd" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/2D Casual UI/Original Artwork/GUI.psd.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/2D Casual UI/Sprite.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/2D Casual UI/Sprite/GUI.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/2D Casual UI/Sprite/GUI.png.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/2D Casual UI/readme.rtf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/2D Casual UI/readme.rtf.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Prefabs/BlueCandy.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Prefabs/BlueCandy.prefab" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Prefabs/ExplodingCandy.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Prefabs/ExplodingCandy.prefab" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Prefabs/GreenCandy.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Prefabs/GreenCandy.prefab" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Prefabs/PurpleCandy.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Prefabs/PurpleCandy.prefab" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scenes/GamePlay.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/GamePlay.unity" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/AddScore.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/AddScore.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/Board.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Board.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Candy.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Candy.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/EventManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/EventManager.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/MatchChecker.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/MatchChecker.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/SoundManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/SoundManager.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Timer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Timer.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/UIManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/UIManager.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/UIManager.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/UIManager.cs.meta" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -41,6 +20,8 @@
   </component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/5879d8d225474494bcffdfe64965038e174000/2b/1e32f386/Object.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/7ec8e29954a6455daa48484a381ec41846ac00/92/b9eb2a4a/AsyncMethodBuilderCore.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/7ec8e29954a6455daa48484a381ec41846ac00/b4/b2fd2c3d/AwaitTaskContinuation.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/7ec8e29954a6455daa48484a381ec41846ac00/d0/134e88e0/Task.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/DontDestroy.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Timer.cs" root0="FORCE_HIGHLIGHTING" />
@@ -128,7 +109,7 @@
       <workItem from="1706529236413" duration="7751000" />
       <workItem from="1706681803640" duration="19901000" />
       <workItem from="1706770114094" duration="8658000" />
-      <workItem from="1706794369197" duration="2818000" />
+      <workItem from="1706794369197" duration="3905000" />
     </task>
     <servers />
   </component>
@@ -144,17 +125,30 @@
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/Assets/Scripts/AddScore.cs</url>
-          <line>8</line>
-          <properties documentPath="C:\Users\berkcan.cabuk\Documents\GitHub\Match_Making\Assets\Scripts\AddScore.cs" initialLine="8" containingFunctionPresentation="Method 'DisplayScore'">
+          <url>file://$PROJECT_DIR$/Assets/Scripts/Board.cs</url>
+          <line>191</line>
+          <properties documentPath="C:\Users\berkcan.cabuk\Documents\GitHub\Match_Making\Assets\Scripts\Board.cs" initialLine="188" containingFunctionPresentation="Method 'TileSwapCheck'">
             <startOffsets>
-              <option value="150" />
+              <option value="5866" />
             </startOffsets>
             <endOffsets>
-              <option value="174" />
+              <option value="5947" />
             </endOffsets>
           </properties>
-          <option name="timeStamp" value="1" />
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/Assets/Scripts/Board.cs</url>
+          <line>192</line>
+          <properties documentPath="C:\Users\berkcan.cabuk\Documents\GitHub\Match_Making\Assets\Scripts\Board.cs" initialLine="189" containingFunctionPresentation="Method 'TileSwapCheck'">
+            <startOffsets>
+              <option value="5956" />
+            </startOffsets>
+            <endOffsets>
+              <option value="6043" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="3" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
