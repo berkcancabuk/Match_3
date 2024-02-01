@@ -190,6 +190,12 @@ public class Board : MonoBehaviour
 
         // Should change it 
         // When given in the if condition it DOES NOT check both of the candies
+        if (candy.candyType.Equals(CandyType.Exploding) && await _matchChecker.CheckExplosion((Candy)candy, _allCandies)) 
+         {
+            await Task.Delay(400);
+            await _tileMover.TileBottomMovement(_allCandies);
+            return;
+        }
         bool condition1 = !await _matchChecker.CheckExplosion((Candy)candy, _allCandies);
         bool condition2 = !await _matchChecker.CheckExplosion((Candy)secondCandy, _allCandies);
         if (condition1 && condition2)

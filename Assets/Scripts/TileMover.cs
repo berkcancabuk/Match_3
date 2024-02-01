@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Abstracts;
+using UnityEngine;
 
 
 [Serializable]
@@ -29,6 +31,7 @@ public class TileMover
     public async Task TileBottomMovement(Tile[,] candies)
     {
         Queue<Tile> m_candyQueue = new();
+        UnityEngine.Debug.Log("BERKCANCANCNACNNA");
         m_allCandies = candies;
         AddRange(m_candyQueue, m_allCandies);
         while (m_candyQueue.Count > 0 )
