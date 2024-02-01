@@ -16,7 +16,7 @@ public class Candy : Tile
 
     Vector3 _mousePosition;
 
-    public TextMeshProUGUI text;
+    
 
     [ContextMenu("TestScaling")] 
     public override void ExplodingTile()

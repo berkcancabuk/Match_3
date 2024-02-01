@@ -38,7 +38,6 @@ public class Board : MonoBehaviour
         else
         {
             Instance = this;
-            DontDestroyOnLoad(this.gameObject);
         }
         _mySequence = DOTween.Sequence();
         _matchChecker = GetComponent<MatchChecker>();
@@ -83,7 +82,6 @@ public class Board : MonoBehaviour
 
                     _allCandies[j, i] = candy.GetComponent<Tile>();
                     _allCandies[j, i].arrayPos = new Vector2(j, i);
-                    _allCandies[j, i].GetComponent<Candy>().text.text = j + "-" + i;
                     _explotionCheckCandies.Add(_allCandies[j,i]);
                     MoveCandy(candy.transform, i, j);
                 }
@@ -102,6 +100,7 @@ public class Board : MonoBehaviour
         {
             await _matchChecker.CheckExplosion(item.GetComponent<Candy>(), _allCandies);
         }
+        await _tileMover.TileBottomMovement(_allCandies);
     }
 
 
@@ -126,8 +125,6 @@ public class Board : MonoBehaviour
 
         (obj2.arrayPos, obj1.arrayPos) = (obj1.arrayPos, obj2.arrayPos);
 
-        obj1.GetComponent<Candy>().text.text = String.Format("{0}-{1}", obj1.arrayPos.x, obj1.arrayPos.y);
-        obj2.GetComponent<Candy>().text.text = String.Format("{0}-{1}", obj2.arrayPos.x, obj2.arrayPos.y);
 
 
         var tempObj = obj1;
@@ -196,6 +193,8 @@ public class Board : MonoBehaviour
         // When given in the if condition it DOES NOT check both of the candies
         bool condition1 = !await _matchChecker.CheckExplosion((Candy)candy, _allCandies);
         bool condition2 = !await _matchChecker.CheckExplosion((Candy)secondCandy, _allCandies);
+        await Task.Delay(400);
+        await _tileMover.TileBottomMovement(_allCandies);
         if (condition1 && condition2)
         {
             // Swap back

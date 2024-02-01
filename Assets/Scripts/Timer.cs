@@ -2,15 +2,15 @@ using TMPro;
 using UnityEngine;
 public class Timer : MonoBehaviour
 {
-    private float _timeRemaining = 0;
-    [SerializeField]private TextMeshProUGUI timeText;
+
+    private UIManager _uiManager;
     
     private void CheckTimer()
     {
-        if (_timeRemaining >= 0)
+        if (_uiManager.timeRemaining >= 0)
         {
-            _timeRemaining += Time.deltaTime;
-            DisplayTime(_timeRemaining);
+            _uiManager.timeRemaining += Time.deltaTime;
+            DisplayTime(_uiManager.timeRemaining);
         }
     }
     void DisplayTime(float timeToDisplay)
@@ -19,11 +19,12 @@ public class Timer : MonoBehaviour
         float minutes = Mathf.FloorToInt(timeToDisplay / 60);
         float seconds = Mathf.FloorToInt(timeToDisplay % 60);
 
-        timeText.text = $"{minutes:00}:{seconds:00}";
+        _uiManager.timeText.text = $"{minutes:00}:{seconds:00}";
     }
 
     private void OnEnable()
     {
+        _uiManager = UIManager.Instance;
         EventManager.OnTimeSet += CheckTimer;
     }
 

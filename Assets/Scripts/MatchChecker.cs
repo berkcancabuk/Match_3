@@ -80,7 +80,6 @@ public class MatchChecker : MonoBehaviour
         
         await DestroyCandies(xArray, candy);
         await DestroyCandies(yArray, candy);
-
         return true;
     }
     
@@ -98,9 +97,10 @@ public class MatchChecker : MonoBehaviour
             Board.Instance.MakeTileNull((int)candy.arrayPos.x, (int)candy.arrayPos.y);
             candy.ExplodingTile();
         } 
+        
+        EventManager.OnAddScore?.Invoke(candies.Count);
         EventManager.OnPlaySound?.Invoke();
-        await Task.Delay(400);
-       await Board.Instance._tileMover.TileBottomMovement(Board.Instance._allCandies);
+        
     }
     
     
