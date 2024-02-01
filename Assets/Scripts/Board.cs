@@ -118,15 +118,19 @@ public class Board : MonoBehaviour
         if (obj1.candyType == CandyType.Empty || obj2.candyType.Equals(CandyType.Empty)) return;
 
 
-        var temp = obj1.arrayPos;
-        obj1.arrayPos = obj2.arrayPos;
-        obj2.arrayPos = temp;
+        //var temp = obj1.arrayPos;
+        //obj1.arrayPos = obj2.arrayPos;
+        //obj2.arrayPos = temp;
+        // Tuple switching
+
+        (obj2.arrayPos, obj1.arrayPos) = (obj1.arrayPos, obj2.arrayPos);
+
         obj1.GetComponent<Candy>().text.text = String.Format("{0}-{1}", obj1.arrayPos.x, obj1.arrayPos.y);
         obj2.GetComponent<Candy>().text.text = String.Format("{0}-{1}", obj2.arrayPos.x, obj2.arrayPos.y);
 
 
         var tempObj = obj1;
-        _allCandies[(int)temp.x, (int)temp.y] = obj2;
+        _allCandies[(int)obj2.arrayPos.x, (int)obj2.arrayPos.y] = obj2;
         _allCandies[(int)obj1.arrayPos.x, (int)obj1.arrayPos.y] = tempObj;
 
 

@@ -68,6 +68,7 @@ public class MatchChecker : MonoBehaviour
         {
             candy.candyType = CandyType.Empty;
             Board.Instance.MakeTileNull((int)candy.arrayPos.x, (int)candy.arrayPos.y);
+            candy.ExplodingTile();
             Destroy(candy.gameObject);
             await Task.Delay(0);
         }
