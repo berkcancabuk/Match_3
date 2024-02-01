@@ -1,5 +1,6 @@
-﻿using DG.Tweening;
-using System.Threading.Tasks;
+﻿using Abstracts;
+using DG.Tweening;
+using Enums;
 using TMPro;
 using UnityEngine;
 
@@ -22,8 +23,8 @@ public class Candy : Tile
     {
         if (_particles != null)
             GetComponentInChildren<ParticleSystem>().Play();
-       transform.DOScale(new Vector3(.5f, .5f, .5f), 0.4f).SetEase(Ease.InBounce).OnComplete(() => Destroy(this.gameObject));
-       
+        transform.DOScale(new Vector3(.5f, .5f, .5f), 0.4f)
+            .SetEase(Ease.InBounce).OnComplete(() => Destroy(gameObject));
     }
 
     public CandyType GetCandyType()
@@ -34,7 +35,6 @@ public class Candy : Tile
     private void OnMouseDown()
     {
         if (Camera.main != null) _mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        Debug.Log("On begin Drag");
         _draggingStarted = true;
         _startPos = _mousePosition;
         print(arrayPos);

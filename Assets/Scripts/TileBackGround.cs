@@ -1,9 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using UnityEngine;
-
-using DG.Tweening;
+using Abstracts;
+using Enums;
 
 public class TileBackGround : Tile
 {

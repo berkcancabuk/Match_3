@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Abstracts;
 using DG.Tweening;
+using Enums;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -20,7 +22,6 @@ public class Board : MonoBehaviour
     private Sequence _mySequence;
     [SerializeField] private Transform parentCandy, parentTile;
     [SerializeField] private GameObject[] candies;
-    [SerializeField] private GameObject _emptyCandy;
 
     public TileMover _tileMover = new();
     public Vector2 selectedObject;
