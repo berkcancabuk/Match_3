@@ -68,15 +68,16 @@ public class MatchChecker : MonoBehaviour
         if (xArray.Count < 2 && yArray.Count < 2)
             return false;
 
-        //if (xArray.Count >= 2 && yArray.Count >= 2)
-        //{
-        //    xArray.Add(candy);
-        //    //xArray.Concat(yArray);
-        //    xArray.AddRange(yArray);
-        //    await DestroyCandies(xArray, null);
-        //    return true;
-        //}
-
+        if (xArray.Count >= 2 && yArray.Count >= 2)
+        {
+            xArray.Add(candy);
+            //xArray.Concat(yArray);
+            xArray.AddRange(yArray);
+            Debug.Log(xArray.Count);
+            await DestroyCandies(xArray, null);
+            return true;
+        }
+        
         await DestroyCandies(xArray, candy);
         await DestroyCandies(yArray, candy);
 
@@ -85,8 +86,11 @@ public class MatchChecker : MonoBehaviour
     
     private async Task DestroyCandies(List<Tile> candies,Candy candys)
     {
-        if (candies.Count <2) return;
-        if (candys.gameObject != null) candies.Add(candys);
+        if (candies.Count < 2)
+        {
+            return;
+        }
+        if (candys != null) candies.Add(candys);
 
         foreach (var candy in candies)
         {

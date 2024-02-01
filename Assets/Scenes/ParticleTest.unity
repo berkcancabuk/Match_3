@@ -581,7 +581,6 @@ MonoBehaviour:
   - {fileID: 4055512074223825493, guid: 052d6c0ee9e686f4aa46e63092acddac, type: 3}
   - {fileID: 5144751748772662460, guid: fb85e0f13815fe84180fa6aa023054e7, type: 3}
   - {fileID: 2119238513619081668, guid: 865f70e514be69f4385b59f56a719946, type: 3}
-  _emptyCandy: {fileID: 4055512074223825493, guid: ecfc99362edec20408e833e16682b1b1, type: 3}
   selectedObject: {x: 0, y: 0}
 --- !u!4 &1528675351
 Transform:
