@@ -17,6 +17,14 @@ public class Candy : Tile
 
     public TextMeshProUGUI text;
 
+    [ContextMenu("TestScaling")] 
+    public override void ExplodingTile()
+    {
+        if (_particles != null)
+            GetComponentInChildren<ParticleSystem>().Play();
+       transform.DOScale(new Vector3(.5f, .5f, .5f), 0.4f).SetEase(Ease.InBounce).OnComplete(() => Destroy(this.gameObject));
+       
+    }
 
     public CandyType GetCandyType()
     {

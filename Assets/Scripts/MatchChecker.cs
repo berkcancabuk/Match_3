@@ -1,3 +1,4 @@
+using DG.Tweening;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -61,6 +62,7 @@ public class MatchChecker : MonoBehaviour
     
     private async Task DestroyCandies(List<Tile> candies,Candy candys)
     {
+        Sequence newSequence = DOTween.Sequence();
         if (candies.Count <2) return;
         if (candys.gameObject != null) candies.Add(candys);
 
@@ -68,14 +70,20 @@ public class MatchChecker : MonoBehaviour
         {
             candy.candyType = CandyType.Empty;
             Board.Instance.MakeTileNull((int)candy.arrayPos.x, (int)candy.arrayPos.y);
+            // newSequence.Join(candy.ExplodingTile());
             candy.ExplodingTile();
-            Destroy(candy.gameObject);
-            await Task.Delay(0);
+            //    .OnComplete(() => {
+            //        DestroyGivenCandies(candies);
+            //});
         }
-
-        await Board.Instance._tileMover.TileBottomMovement(Board.Instance._allCandies);
+        await Task.Delay(400);
+       await Board.Instance._tileMover.TileBottomMovement(Board.Instance._allCandies);
     }
-    
+
+    private void DestroyGivenCandies(List<Tile> candiesToDestroy)
+    {
+        foreach (Tile candy in candiesToDestroy) { Destroy(candy.gameObject); }
+    }
     
 }
 
