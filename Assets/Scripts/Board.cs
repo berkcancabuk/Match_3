@@ -68,6 +68,7 @@ public class Board : MonoBehaviour
         this.isReady = isReady;
     }
 
+    // Init function for setting up the board
     private async void SetUp()
     {
         for (var i = 0; i < column; i++)
@@ -101,11 +102,12 @@ public class Board : MonoBehaviour
 
         // Used to reset and for not exploding untouched candies
         isReady = false;
-
+        _mySequence = DOTween.Sequence();
         // Always checks the explosion of candies
         // A way to stop the explosion of untouched and unrelated candies can be implemented
         foreach (var item in allCandies)
         {
+            
             if (await _matchChecker.CheckExplosion(item.GetComponent<Candy>(), allCandies))
             {
                 await Task.Delay(400);
@@ -206,11 +208,7 @@ public class Board : MonoBehaviour
         if (obj1.gameObject == null || obj2.gameObject == null) return;
         if (obj1.candyType == CandyType.Empty || obj2.candyType.Equals(CandyType.Empty)) return;
         
-
         (obj2.arrayPos, obj1.arrayPos) = (obj1.arrayPos, obj2.arrayPos);
-
-
-
         var tempObj = obj1;
         allCandies[(int)obj2.arrayPos.x, (int)obj2.arrayPos.y] = obj2;
         allCandies[(int)obj1.arrayPos.x, (int)obj1.arrayPos.y] = tempObj;
@@ -236,6 +234,7 @@ public class Board : MonoBehaviour
         return allCandies[x, y - 1].candyType == CandyType.Empty;
     }
 
+    // Check with the direction
     public async Task TileSwapCheck(Vector2 pos, Direction moveDir)
     {
         var x = (int)pos.x;

@@ -19,11 +19,11 @@ public class Candy : Tile
     
 
     [ContextMenu("TestScaling")] 
-    public override void ExplodingTile()
+    public override Tween ExplodingTile()
     {
         if (_particles != null)
             GetComponentInChildren<ParticleSystem>().Play();
-        transform.DOScale(new Vector3(.5f, .5f, .5f), 0.4f)
+        return transform.DOScale(new Vector3(.5f, .5f, .5f), 0.4f)
             .SetEase(Ease.InBounce).OnComplete(() => Destroy(gameObject));
     }
 

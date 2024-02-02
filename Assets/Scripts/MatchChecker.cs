@@ -1,7 +1,9 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Abstracts;
+using DG.Tweening;
 using Enums;
 using UnityEngine;
 
@@ -116,14 +118,14 @@ public class MatchChecker : MonoBehaviour
             return;
         }
         if (candys != null) candies.Add(candys);
-
+        Sequence sequence = DOTween.Sequence();
         foreach (var candy in candies)
         {
             candy.candyType = CandyType.Empty;
             Board.Instance.MakeTileNull((int)candy.arrayPos.x, (int)candy.arrayPos.y);
-            candy.ExplodingTile();
-        } 
-        
+            sequence.Join(candy.ExplodingTile());
+        }
+        await sequence.Play().AsyncWaitForCompletion();
         EventManager.OnAddScore?.Invoke(candies.Count);
         EventManager.OnPlaySound?.Invoke();
        

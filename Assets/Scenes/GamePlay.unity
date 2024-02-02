@@ -811,7 +811,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -101.90997}
+  m_AnchoredPosition: {x: 0, y: -197}
   m_SizeDelta: {x: 0, y: 203.82996}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1026680635
@@ -1125,7 +1125,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 5
+  orthographic size: 6
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -1311,11 +1311,14 @@ MonoBehaviour:
   tilePrefab: {fileID: 4013053388998532450, guid: ec893e8c2ecab6e4fa4039d8b568028d, type: 3}
   parentCandy: {fileID: 1691107620}
   parentTile: {fileID: 1528675351}
-  candies:
-  - {fileID: 8076060634908614641, guid: 6225a6b02d5616045bfb963508ac1a59, type: 3}
-  - {fileID: 4055512074223825493, guid: 052d6c0ee9e686f4aa46e63092acddac, type: 3}
-  - {fileID: 5144751748772662460, guid: fb85e0f13815fe84180fa6aa023054e7, type: 3}
-  - {fileID: 2119238513619081668, guid: 865f70e514be69f4385b59f56a719946, type: 3}
+  candyPrefab: {fileID: 8076060634908614641, guid: 9e74910bd5377624c9abf6553dd8fdc8, type: 3}
+  _candySprites:
+  - {fileID: -1448123593, guid: 3f48832aa39dd1041913f3b9b09fc3db, type: 3}
+  - {fileID: 400154341, guid: 3f48832aa39dd1041913f3b9b09fc3db, type: 3}
+  - {fileID: 925766059, guid: 3f48832aa39dd1041913f3b9b09fc3db, type: 3}
+  - {fileID: 200647705, guid: 3f48832aa39dd1041913f3b9b09fc3db, type: 3}
+  _candyTypes: 00000000010000000200000003000000
+  _candyDefaultName: Candy_
   selectedObject: {x: 0, y: 0}
 --- !u!4 &1528675351
 Transform:

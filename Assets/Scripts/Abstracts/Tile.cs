@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using DG.Tweening;
 using Enums;
 using UnityEngine;
 
@@ -13,7 +14,7 @@ namespace Abstracts
         public Vector2 arrayPos = Vector2.zero;
         [SerializeField] protected ParticleSystem _particles;
 
-        public abstract void ExplodingTile();
+        public abstract Tween ExplodingTile();
     }
 }
 

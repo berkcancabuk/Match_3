@@ -1,4 +1,5 @@
 using Abstracts;
+using DG.Tweening;
 using Enums;
 
 public class TileBackGround : Tile
@@ -8,7 +9,7 @@ public class TileBackGround : Tile
         throw new System.NotImplementedException();
     }
 
-    public override void ExplodingTile()
+    public override Tween ExplodingTile()
     {
         throw null;
     }
