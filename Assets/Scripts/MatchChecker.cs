@@ -83,7 +83,32 @@ public class MatchChecker : MonoBehaviour
         print("alta girdi");
         return true;
     }
-    
+    public async Task<bool> CheckExplosion(Candy candy)
+    {
+        Tile[,] candies = Board.Instance.allCandies;
+
+        xArray.Clear();
+        yArray.Clear();
+        var x = (int)candy.arrayPos.x;
+        var y = (int)candy.arrayPos.y;
+        if (candies[x, y] == null)
+        {
+            return false;
+        }
+        await ConditionLoop(candies, xArray, new int[] { x, y }, x, new int[] { 1, 0 }, 0);
+        await ConditionLoop(candies, xArray, new int[] { x, y }, x, new int[] { -1, 0 }, -1);
+        await ConditionLoop(candies, yArray, new int[] { x, y }, y, new int[] { 0, 1 }, 1);
+        await ConditionLoop(candies, yArray, new int[] { x, y }, y, new int[] { 0, -1 }, -1);
+
+        if (xArray.Count < 2 && yArray.Count < 2)
+            return false;
+
+        //if (xArray.Count >= 2 && yArray.Count >= 2)
+        //{
+        //    return true;
+        //}
+        return true;
+    }
     private async Task DestroyCandies(List<Tile> candies,Candy candys)
     {
         if (candies.Count < 2)

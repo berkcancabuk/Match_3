@@ -576,12 +576,6 @@ MonoBehaviour:
   tilePrefab: {fileID: 4013053388998532450, guid: ec893e8c2ecab6e4fa4039d8b568028d, type: 3}
   parentCandy: {fileID: 1691107620}
   parentTile: {fileID: 1528675351}
-  candies:
-  - {fileID: 8076060634908614641, guid: 6225a6b02d5616045bfb963508ac1a59, type: 3}
-  - {fileID: 4055512074223825493, guid: 052d6c0ee9e686f4aa46e63092acddac, type: 3}
-  - {fileID: 5144751748772662460, guid: fb85e0f13815fe84180fa6aa023054e7, type: 3}
-  - {fileID: 2119238513619081668, guid: 865f70e514be69f4385b59f56a719946, type: 3}
-  - {fileID: 4055512074223825493, guid: ad8486190d358404785cd1ed388c63bc, type: 3}
   candyPrefab: {fileID: 8076060634908614641, guid: 9e74910bd5377624c9abf6553dd8fdc8, type: 3}
   _candySprites:
   - {fileID: -1448123593, guid: 3f48832aa39dd1041913f3b9b09fc3db, type: 3}
