@@ -20,7 +20,7 @@ public class Board : MonoBehaviour
     public int row;
     public GameObject tilePrefab;
     public Tile[,] _allBackGround;
-    public Tile[,] _allCandies;
+    public Tile[,] allCandies;
 
 
     private Sequence _mySequence;
@@ -58,7 +58,7 @@ public class Board : MonoBehaviour
     private void Start()
     {
         _allBackGround = new Tile[column, row];
-        _allCandies = new Tile[column, row];
+        allCandies = new Tile[column, row];
 
         SetUp();
     }
@@ -104,12 +104,12 @@ public class Board : MonoBehaviour
 
         // Always checks the explosion of candies
         // A way to stop the explosion of untouched and unrelated candies can be implemented
-        foreach (var item in _allCandies)
+        foreach (var item in allCandies)
         {
-            if (await _matchChecker.CheckExplosion(item.GetComponent<Candy>(), _allCandies))
+            if (await _matchChecker.CheckExplosion(item.GetComponent<Candy>(), allCandies))
             {
                 await Task.Delay(400);
-                await _tileMover.TileBottomMovement(_allCandies);
+                await _tileMover.TileBottomMovement(allCandies);
             }
         }
         
@@ -124,7 +124,7 @@ public class Board : MonoBehaviour
             _mySequence = DOTween.Sequence();
             for (int j = 0; j < column; j++)
             {
-                if (_allCandies[j, i] == null)
+                if (allCandies[j, i] == null)
                 {
                     //var candy = Instantiate(candies[Random.Range(0, candies.Length)], new Vector2(j, row + 1),
                     //    Quaternion.identity, parentCandy);
@@ -133,15 +133,22 @@ public class Board : MonoBehaviour
                         Quaternion.identity, parentCandy);
                     int random = Random.Range(0, _candyTypes.Length);
 
-                    Tuple<Sprite, CandyType> candySettings = _candySettings.GetRandomStyle();
-
-                    candy.GetComponent<SpriteRenderer>().sprite = candySettings.Item1;
-                    candy.GetComponent<Candy>().candyType = candySettings.Item2;
-                    candy.gameObject.name = _candyDefaultName + candySettings.Item2 + " " + j + "," + i;
-
-                    _allCandies[j, i] = candy.GetComponent<Tile>();
-                    _allCandies[j, i].arrayPos = new Vector2(j, i);
-                    _explotionCheckCandies.Add(_allCandies[j, i]);
+                    allCandies[j, i] = candy.GetComponent<Tile>();
+                    allCandies[j, i].arrayPos = new Vector2(j, i);
+                    int count = 0;
+                    while (count < 10)
+                    {
+                        Tuple<Sprite, CandyType> candySettings = _candySettings.GetRandomStyle();
+                        candy.GetComponent<SpriteRenderer>().sprite = candySettings.Item1;
+                        candy.GetComponent<Candy>().candyType = candySettings.Item2;
+                        candy.gameObject.name = _candyDefaultName + candySettings.Item2 + " " + j + "," + i;
+                        count++;
+                        
+                        if (!await _matchChecker.CheckExplosion(candy.GetComponent<Candy>()))
+                        {
+                            break;
+                        }
+                    }
                     MoveCandy(candy.transform, i, j);
                 }
             }
@@ -158,7 +165,7 @@ public class Board : MonoBehaviour
             _mySequence = DOTween.Sequence();
             for (int j = 0; j < column; j++)
             {
-                if (_allCandies[j, i] == null)
+                if (allCandies[j, i] == null)
                 {
                     //var candy = Instantiate(candies[Random.Range(0, candies.Length)], new Vector2(j, row + 1),
                     //    Quaternion.identity, parentCandy);
@@ -173,9 +180,9 @@ public class Board : MonoBehaviour
                     candy.GetComponent<Candy>().candyType = candySettings.Item2;
                     candy.gameObject.name = _candyDefaultName + candySettings.Item2 + " " + j + "," + i;
 
-                    _allCandies[j, i] = candy.GetComponent<Tile>();
-                    _allCandies[j, i].arrayPos = new Vector2(j, i);
-                    _explotionCheckCandies.Add(_allCandies[j, i]);
+                    allCandies[j, i] = candy.GetComponent<Tile>();
+                    allCandies[j, i].arrayPos = new Vector2(j, i);
+                    _explotionCheckCandies.Add(allCandies[j, i]);
                     MoveCandy(candy.transform, i, j);
                 }
             }
@@ -205,8 +212,8 @@ public class Board : MonoBehaviour
 
 
         var tempObj = obj1;
-        _allCandies[(int)obj2.arrayPos.x, (int)obj2.arrayPos.y] = obj2;
-        _allCandies[(int)obj1.arrayPos.x, (int)obj1.arrayPos.y] = tempObj;
+        allCandies[(int)obj2.arrayPos.x, (int)obj2.arrayPos.y] = obj2;
+        allCandies[(int)obj1.arrayPos.x, (int)obj1.arrayPos.y] = tempObj;
 
 
         var sequence = DOTween.Sequence();
@@ -226,41 +233,41 @@ public class Board : MonoBehaviour
             return false;
         }
 
-        return _allCandies[x, y - 1].candyType == CandyType.Empty;
+        return allCandies[x, y - 1].candyType == CandyType.Empty;
     }
 
     public async Task TileSwapCheck(Vector2 pos, Direction moveDir)
     {
         var x = (int)pos.x;
         var y = (int)pos.y;
-        Tile candy = _allCandies[x, y];
+        Tile candy = allCandies[x, y];
         Tile secondCandy = null;
 
         switch (moveDir)
         {
             case Direction.Left:
                 if (x - 1 < 0) return;
-                if (_allCandies[x, y].gameObject == null || _allCandies[x - 1, y].gameObject == null) return;
-                await Swap(_allCandies[x, y], _allCandies[x - 1, y]);
-                secondCandy = _allCandies[x, y];
+                if (allCandies[x, y].gameObject == null || allCandies[x - 1, y].gameObject == null) return;
+                await Swap(allCandies[x, y], allCandies[x - 1, y]);
+                secondCandy = allCandies[x, y];
                 break;
             case Direction.Up:
                 if (y + 1 > column + 1) return;
-                if (_allCandies[x, y].gameObject == null || _allCandies[x, y + 1].gameObject == null) return;
-                await Swap(_allCandies[x, y], _allCandies[x, y + 1]);
-                secondCandy = _allCandies[x, y];
+                if (allCandies[x, y].gameObject == null || allCandies[x, y + 1].gameObject == null) return;
+                await Swap(allCandies[x, y], allCandies[x, y + 1]);
+                secondCandy = allCandies[x, y];
                 break;
             case Direction.Right:
                 if (x + 1 > row) return;
-                if (_allCandies[x, y].gameObject == null || _allCandies[x + 1, y].gameObject == null) return;
-                await Swap(_allCandies[x, y], _allCandies[x + 1, y]);
-                secondCandy = _allCandies[x, y];
+                if (allCandies[x, y].gameObject == null || allCandies[x + 1, y].gameObject == null) return;
+                await Swap(allCandies[x, y], allCandies[x + 1, y]);
+                secondCandy = allCandies[x, y];
                 break;
             case Direction.Down:
                 if (y - 1 < 0) return;
-                if (_allCandies[x, y].gameObject == null || _allCandies[x, y - 1].gameObject == null) return;
-                await Swap(_allCandies[x, y], _allCandies[x, y - 1]);
-                secondCandy = _allCandies[x, y];
+                if (allCandies[x, y].gameObject == null || allCandies[x, y - 1].gameObject == null) return;
+                await Swap(allCandies[x, y], allCandies[x, y - 1]);
+                secondCandy = allCandies[x, y];
                 break;
             case Direction.None:
                 throw new ArgumentOutOfRangeException(nameof(moveDir), moveDir, null);
@@ -268,35 +275,35 @@ public class Board : MonoBehaviour
 
         // Should change it 
         // When given in the if condition it DOES NOT check both of the candies
-        if (candy.candyType.Equals(CandyType.Exploding) && await _matchChecker.CheckExplosion((Candy)candy, _allCandies)) 
+        if (candy.candyType.Equals(CandyType.Exploding) && await _matchChecker.CheckExplosion((Candy)candy, allCandies)) 
          {
             await Task.Delay(400);
-            await _tileMover.TileBottomMovement(_allCandies);
+            await _tileMover.TileBottomMovement(allCandies);
             return;
         }
-        bool condition1 = !await _matchChecker.CheckExplosion((Candy)candy, _allCandies);
-        bool condition2 = !await _matchChecker.CheckExplosion((Candy)secondCandy, _allCandies);
+        bool condition1 = !await _matchChecker.CheckExplosion((Candy)candy, allCandies);
+        bool condition2 = !await _matchChecker.CheckExplosion((Candy)secondCandy, allCandies);
         if (condition1 && condition2)
         {
             // Swap back
            await Swap(candy, secondCandy);
         }
         await Task.Delay(400);
-        await _tileMover.TileBottomMovement(_allCandies);
+        await _tileMover.TileBottomMovement(allCandies);
     }
 
     public void MakeTileNull(int x, int y)
     {
-        _allCandies[x, y] = null;
+        allCandies[x, y] = null;
     }
     public void MoveSingleTileToBottom(int x, int y)
     {
-        if(_allCandies[x, y].candyType == CandyType.Empty) return;
-        _allCandies[x, y - 1] = _allCandies[x, y];
-        _allCandies[x, y - 1].gameObject.transform.DOMove(new Vector2(x, y - 1), TWEEN_DURATION);
-        _allCandies[x, y - 1].candyType = _allCandies[x, y].candyType;
-        _allCandies[x, y - 1].arrayPos = new Vector2(x, y - 1);
-        _allCandies[x, y] = null;
+        if(allCandies[x, y].candyType == CandyType.Empty) return;
+        allCandies[x, y - 1] = allCandies[x, y];
+        allCandies[x, y - 1].gameObject.transform.DOMove(new Vector2(x, y - 1), TWEEN_DURATION);
+        allCandies[x, y - 1].candyType = allCandies[x, y].candyType;
+        allCandies[x, y - 1].arrayPos = new Vector2(x, y - 1);
+        allCandies[x, y] = null;
         //await _matchChecker.CheckExplosion(_allCandies[x, y - 1].GetComponent<Candy>(), _allCandies);
     }
 }
