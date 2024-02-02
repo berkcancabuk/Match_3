@@ -31,7 +31,6 @@ public class TileMover
     public async Task TileBottomMovement(Tile[,] candies)
     {
         Queue<Tile> m_candyQueue = new();
-        UnityEngine.Debug.Log("BERKCANCANCNACNNA");
         m_allCandies = candies;
         AddRange(m_candyQueue, m_allCandies);
         while (m_candyQueue.Count > 0 )
@@ -52,7 +51,7 @@ public class TileMover
         }
 
         await Task.Delay(0);
-
+        Board.Instance.SetReady(true);
         await Board.Instance.FillEmptyTile();
     }
 
