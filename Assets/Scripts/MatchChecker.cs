@@ -104,11 +104,6 @@ public class MatchChecker : MonoBehaviour
 
         if (xArray.Count < 2 && yArray.Count < 2)
             return false;
-
-        //if (xArray.Count >= 2 && yArray.Count >= 2)
-        //{
-        //    return true;
-        //}
         return true;
     }
     private async Task DestroyCandies(List<Tile> candies,Candy candys)
@@ -125,7 +120,7 @@ public class MatchChecker : MonoBehaviour
             Board.Instance.MakeTileNull((int)candy.arrayPos.x, (int)candy.arrayPos.y);
             sequence.Join(candy.ExplodingTile());
         }
-        await sequence.Play().AsyncWaitForCompletion();
+        sequence.Play();
         EventManager.OnAddScore?.Invoke(candies.Count);
         EventManager.OnPlaySound?.Invoke();
        
