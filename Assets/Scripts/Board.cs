@@ -81,7 +81,7 @@ public class Board : MonoBehaviour
             }
         }
         isReady = true;
-        await FillEmptyTile();
+        await Fill(_explotionCheckCandies);
     }
 
 
@@ -91,15 +91,9 @@ public class Board : MonoBehaviour
         {
             return;
         }
-        if (!_isInit)
-        {
-            Fill(_explotionCheckCandies);
-            _isInit = true;
-            return;
-        }
+
         await Fill();
         
-
         // Used to reset and for not exploding untouched candies
         isReady = false;
         _mySequence = DOTween.Sequence();
