@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Threading.Tasks;
 using Abstracts;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 
@@ -28,7 +28,7 @@ public class TileMover
         
     }
 
-    public async Task TileBottomMovement(Tile[,] candies)
+    public async UniTask TileBottomMovement(Tile[,] candies)
     {
         Queue<Tile> m_candyQueue = new();
         m_allCandies = candies;
@@ -50,7 +50,7 @@ public class TileMover
             }
         }
 
-        await Task.Delay(0);
+        await UniTask.Delay(0);
         Board.Instance.SetReady(true);
         await Board.Instance.FillEmptyTile();
     }

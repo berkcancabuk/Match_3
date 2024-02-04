@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using Abstracts;
 using DG.Tweening;
 using Enums;
 using UnityEngine;
+using Cysharp.Threading.Tasks;
 using Random = UnityEngine.Random;
 
 public class Board : MonoBehaviour
@@ -85,7 +85,7 @@ public class Board : MonoBehaviour
     }
 
 
-    public async Task FillEmptyTile()
+    public async UniTask FillEmptyTile()
     {
         if (!isReady)
         {
@@ -104,7 +104,7 @@ public class Board : MonoBehaviour
             
             if (await _matchChecker.CheckExplosion(item.GetComponent<Candy>(), allCandies))
             {
-                await Task.Delay(400);
+                await UniTask.Delay(400);
                 await _tileMover.TileBottomMovement(allCandies);
             }
         }
@@ -112,7 +112,7 @@ public class Board : MonoBehaviour
     }
 
 
-    private async Task Fill(List<Tile> tiles)
+    private async UniTask Fill(List<Tile> tiles)
     {
         _explotionCheckCandies.Clear();
         for (int i = 0; i < row; i++)
@@ -153,7 +153,7 @@ public class Board : MonoBehaviour
 
         }
     }
-    private async Task Fill()
+    private async UniTask Fill()
     {
         _explotionCheckCandies.Clear();
         for (int i = 0; i < row; i++)
@@ -197,7 +197,7 @@ public class Board : MonoBehaviour
 
     private const float TWEEN_DURATION = 0.2f;
 
-    private async Task Swap(Tile obj1, Tile obj2)
+    private async UniTask Swap(Tile obj1, Tile obj2)
     {
         if (obj1.gameObject == null || obj2.gameObject == null) return;
         if (obj1.candyType == CandyType.Empty || obj2.candyType.Equals(CandyType.Empty)) return;
@@ -229,7 +229,7 @@ public class Board : MonoBehaviour
     }
 
     // Check with the direction
-    public async Task TileSwapCheck(Vector2 pos, Direction moveDir)
+    public async UniTask TileSwapCheck(Vector2 pos, Direction moveDir)
     {
         var x = (int)pos.x;
         var y = (int)pos.y;
@@ -270,7 +270,7 @@ public class Board : MonoBehaviour
         // When given in the if condition it DOES NOT check both of the candies
         if (candy.candyType.Equals(CandyType.Exploding) && await _matchChecker.CheckExplosion((Candy)candy, allCandies)) 
          {
-            await Task.Delay(400);
+            await UniTask.Delay(400);
             await _tileMover.TileBottomMovement(allCandies);
             return;
         }
@@ -281,7 +281,7 @@ public class Board : MonoBehaviour
             // Swap back
            await Swap(candy, secondCandy);
         }
-        await Task.Delay(400);
+        await UniTask.Delay(400);
         await _tileMover.TileBottomMovement(allCandies);
     }
 

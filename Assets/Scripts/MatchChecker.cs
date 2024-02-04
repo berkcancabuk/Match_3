@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using Abstracts;
 using DG.Tweening;
 using Enums;
@@ -12,7 +12,7 @@ public class MatchChecker : MonoBehaviour
     readonly List<Tile> xArray = new();
     readonly List<Tile> yArray = new();
     
-    private async Task ConditionLoop(Tile[,] candies, List<Tile> arrayToAdd, int[] coordinates, int mainPos, int[] increase, int dimension)
+    private async UniTask ConditionLoop(Tile[,] candies, List<Tile> arrayToAdd, int[] coordinates, int mainPos, int[] increase, int dimension)
     {
         var type = candies[coordinates[0], coordinates[1]].candyType;
 
@@ -28,7 +28,7 @@ public class MatchChecker : MonoBehaviour
                 arrayToAdd.Add(candies[coordinates[0] + increase[0], coordinates[1] + increase[1]]);
                 coordinates[0] += increase[0];
                 coordinates[1] += increase[1];
-                await Task.Delay(0);
+                await UniTask.Delay(0);
             }
         }
         else
@@ -41,7 +41,7 @@ public class MatchChecker : MonoBehaviour
                 arrayToAdd.Add(candies[coordinates[0] + increase[0], coordinates[1] + increase[1]]);
                 coordinates[0] += increase[0];
                 coordinates[1] += increase[1];
-                await Task.Delay(0);
+                await UniTask.Delay(0);
             }
         }
 
@@ -55,7 +55,7 @@ public class MatchChecker : MonoBehaviour
         return dimension == -1 ? pos > 0 : pos < dimension - 1;
     }
 
-    public async Task<bool> CheckExplosion(Candy candy, Tile[,] candies)
+    public async UniTask<bool> CheckExplosion(Candy candy, Tile[,] candies)
     {
         xArray.Clear();
         yArray.Clear();
@@ -85,7 +85,7 @@ public class MatchChecker : MonoBehaviour
         print("alta girdi");
         return true;
     }
-    public async Task<bool> CheckExplosion(Candy candy)
+    public async UniTask<bool> CheckExplosion(Candy candy)
     {
         Tile[,] candies = Board.Instance.allCandies;
 
@@ -106,7 +106,7 @@ public class MatchChecker : MonoBehaviour
             return false;
         return true;
     }
-    private async Task DestroyCandies(List<Tile> candies,Candy candys)
+    private async UniTask DestroyCandies(List<Tile> candies,Candy candys)
     {
         if (candies.Count < 2)
         {
