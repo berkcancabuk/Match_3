@@ -29,6 +29,7 @@ public class Board : MonoBehaviour
     [SerializeField] private Transform parentCandy, parentTile;
     [SerializeField] private GameObject candyPrefab;
     [SerializeField] private Sprite[] _candySprites;
+    public bool isSwapped;
 
     // Maybe move it to another class
     [SerializeField] private CandyType[] _candyTypes;
@@ -39,6 +40,8 @@ public class Board : MonoBehaviour
     private bool _isInit;
     private List<Tile> _explotionCheckCandies =  new();
     private bool isReady = false;
+
+    private List<Tile> _candiesToExplode = new();
 
     private void Awake()
     {
@@ -81,7 +84,7 @@ public class Board : MonoBehaviour
             }
         }
         isReady = true;
-        await Fill(_explotionCheckCandies);
+        await StartFill(_explotionCheckCandies);
     }
 
 
@@ -92,27 +95,28 @@ public class Board : MonoBehaviour
             return;
         }
 
-        await Fill();
+        await ExplosionFill();
         
         // Used to reset and for not exploding untouched candies
         isReady = false;
-        _mySequence = DOTween.Sequence();
         // Always checks the explosion of candies
         // A way to stop the explosion of untouched and unrelated candies can be implemented
+
+        //_candiesToExplode.Clear();
         foreach (var item in allCandies)
         {
-            
-            if (await _matchChecker.CheckExplosion(item.GetComponent<Candy>(), allCandies))
-            {
-                await UniTask.Delay(400);
-                await _tileMover.TileBottomMovement(allCandies);
-            }
+            List<Tile> tiles = await _matchChecker.CheckMovedCandies(item.GetComponent<Candy>());
+            _candiesToExplode.AddRange(tiles);
         }
-        
+        Debug.Log(_candiesToExplode.Count);
+        await _matchChecker.DestroyCandies(_candiesToExplode, null);
+        Debug.Log("FinishedDestroying");
+        await UniTask.Delay(400);
+        await _tileMover.TileBottomMovement(allCandies);
     }
 
 
-    private async UniTask Fill(List<Tile> tiles)
+    private async UniTask StartFill(List<Tile> tiles)
     {
         _explotionCheckCandies.Clear();
         for (int i = 0; i < row; i++)
@@ -153,12 +157,13 @@ public class Board : MonoBehaviour
 
         }
     }
-    private async UniTask Fill()
+    private async UniTask ExplosionFill()
     {
         _explotionCheckCandies.Clear();
+        _mySequence = DOTween.Sequence();
+
         for (int i = 0; i < row; i++)
         {
-            _mySequence = DOTween.Sequence();
             for (int j = 0; j < column; j++)
             {
                 if (allCandies[j, i] == null)
@@ -183,9 +188,10 @@ public class Board : MonoBehaviour
                 }
             }
 
-            await _mySequence.Play().AsyncWaitForCompletion();
 
         }
+        await _mySequence.Play().AsyncWaitForCompletion();
+
     }
 
 
