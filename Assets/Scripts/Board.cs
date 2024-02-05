@@ -102,17 +102,16 @@ public class Board : MonoBehaviour
         // Always checks the explosion of candies
         // A way to stop the explosion of untouched and unrelated candies can be implemented
 
-        //_candiesToExplode.Clear();
+        _candiesToExplode.Clear();
         foreach (var item in allCandies)
         {
-            List<Tile> tiles = await _matchChecker.CheckMovedCandies(item.GetComponent<Candy>());
-            _candiesToExplode.AddRange(tiles);
+            if (await _matchChecker.CheckExplosion(item.GetComponent<Candy>(), allCandies))
+            {
+                await UniTask.Delay(400);
+                await _tileMover.TileBottomMovement(allCandies);
+            }
         }
-        Debug.Log(_candiesToExplode.Count);
-        await _matchChecker.DestroyCandies(_candiesToExplode, null);
-        Debug.Log("FinishedDestroying");
-        await UniTask.Delay(400);
-        await _tileMover.TileBottomMovement(allCandies);
+
     }
 
 
@@ -126,9 +125,6 @@ public class Board : MonoBehaviour
             {
                 if (allCandies[j, i] == null)
                 {
-                    //var candy = Instantiate(candies[Random.Range(0, candies.Length)], new Vector2(j, row + 1),
-                    //    Quaternion.identity, parentCandy);
-
                     var candy = Instantiate(candyPrefab, new Vector2(j, row + 1),
                         Quaternion.identity, parentCandy);
                     int random = Random.Range(0, _candyTypes.Length);
@@ -272,8 +268,8 @@ public class Board : MonoBehaviour
                 throw new ArgumentOutOfRangeException(nameof(moveDir), moveDir, null);
         }
 
-        // Should change it 
-        // When given in the if condition it DOES NOT check both of the candies
+
+        // Exploding candies block Should change it to support more special candies
         if (candy.candyType.Equals(CandyType.Exploding) && await _matchChecker.CheckExplosion((Candy)candy, allCandies)) 
          {
             await UniTask.Delay(400);

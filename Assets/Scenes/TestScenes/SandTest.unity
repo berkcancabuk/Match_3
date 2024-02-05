@@ -335,7 +335,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 39b0f1e26afe17d47883fcf352201dd0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  column: 5
+  column: 10
   row: 7
   _tilePrefab: {fileID: 4013053388998532450, guid: ca2c65e9db8b5734eaf1728cb5af1f02, type: 3}
   _parentTile: {fileID: 1852861479}

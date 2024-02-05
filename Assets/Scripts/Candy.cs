@@ -34,7 +34,7 @@ public class Candy : Tile
 
     private void OnMouseDown()
     {
-        if (Board.Instance.isSwapped) return;
+        //if (Board.Instance.isSwapped) return;
         if (Camera.main != null) _mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         _draggingStarted = true;
         _startPos = _mousePosition;

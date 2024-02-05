@@ -105,45 +105,45 @@ public class MatchChecker : MonoBehaviour
         return true;
     }
 
-    public async UniTask<List<Tile>> CheckMovedCandies(Candy candy)
-    {
-        List<Tile> emptyTiles = new();
-        Tile[,] candies = Board.Instance.allCandies;
+    //public async UniTask<List<Tile>> CheckMovedCandies(Candy candy)
+    //{
+    //    List<Tile> emptyTiles = new();
+    //    Tile[,] candies = Board.Instance.allCandies;
 
-        xArray.Clear();
-        yArray.Clear();
-        var x = (int)candy.arrayPos.x;
-        var y = (int)candy.arrayPos.y;
-        if (candies[x, y] == null)
-        {
-            return emptyTiles;
-        }
-        await ConditionLoop(candies, xArray, new int[] { x, y }, x, new int[] { 1, 0 }, 0);
-        await ConditionLoop(candies, xArray, new int[] { x, y }, x, new int[] { -1, 0 }, -1);
-        await ConditionLoop(candies, yArray, new int[] { x, y }, y, new int[] { 0, 1 }, 1);
-        await ConditionLoop(candies, yArray, new int[] { x, y }, y, new int[] { 0, -1 }, -1);
+    //    xArray.Clear();
+    //    yArray.Clear();
+    //    var x = (int)candy.arrayPos.x;
+    //    var y = (int)candy.arrayPos.y;
+    //    if (candies[x, y] == null)
+    //    {
+    //        return emptyTiles;
+    //    }
+    //    await ConditionLoop(candies, xArray, new int[] { x, y }, x, new int[] { 1, 0 }, 0);
+    //    await ConditionLoop(candies, xArray, new int[] { x, y }, x, new int[] { -1, 0 }, -1);
+    //    await ConditionLoop(candies, yArray, new int[] { x, y }, y, new int[] { 0, 1 }, 1);
+    //    await ConditionLoop(candies, yArray, new int[] { x, y }, y, new int[] { 0, -1 }, -1);
 
-        if (xArray.Count < 2 && yArray.Count < 2)
-            return emptyTiles;
+    //    if (xArray.Count < 2 && yArray.Count < 2)
+    //        return emptyTiles;
         
-        if (xArray.Count > 2 && yArray.Count > 2)
-        {
-            xArray.Add(candy);
-            xArray.AddRange(yArray);
-            return xArray;
-        }
-        else if (xArray.Count > 2)
-        {
-            xArray.Add(candy);
-            return xArray;
-        }
-        else if (yArray.Count > 2)
-        {
-            yArray.Add(candy);
-            return yArray;
-        }
-        return emptyTiles;
-    }
+    //    if (xArray.Count > 2 && yArray.Count > 2)
+    //    {
+    //        xArray.Add(candy);
+    //        xArray.AddRange(yArray);
+    //        return xArray;
+    //    }
+    //    else if (xArray.Count > 2)
+    //    {
+    //        xArray.Add(candy);
+    //        return xArray;
+    //    }
+    //    else if (yArray.Count > 2)
+    //    {
+    //        yArray.Add(candy);
+    //        return yArray;
+    //    }
+    //    return emptyTiles;
+    //}
 
     public async UniTask DestroyCandies(List<Tile> candies,Candy candys)
     {
@@ -163,7 +163,7 @@ public class MatchChecker : MonoBehaviour
             Board.Instance.MakeTileNull((int)candy.arrayPos.x, (int)candy.arrayPos.y);
             sequence.Join(candy.ExplodingTile());
         }
-        Debug.Log("Starting sequence");
+
         sequence.Play();
         await UniTask.Yield(0);
         EventManager.OnAddScore?.Invoke(candies.Count);
