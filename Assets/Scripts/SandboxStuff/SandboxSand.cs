@@ -17,9 +17,13 @@ public class SandboxSand : MonoBehaviour
     {
         StartCoroutine(nameof(SwapChecker));
     }
+
+    // Test with coroutine and UniTask
+    // normal async 
     IEnumerator SwapChecker()
     {
         bool random = false;
+        bool end = false;
         WaitForSeconds time = new WaitForSeconds(0.2f);
         while (true)
         {
@@ -51,7 +55,7 @@ public class SandboxSand : MonoBehaviour
                     }
                 }
 
-                    Debug.Log("Sand Not Falling Below");
+                Debug.Log("Sand Not Falling Below");
             }
 
             yield return null;
