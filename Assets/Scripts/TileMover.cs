@@ -53,6 +53,8 @@ public class TileMover
         await UniTask.Delay(0);
         Board.Instance.SetReady(true);
         await Board.Instance.FillEmptyTile();
+        await UniTask.Delay(100);
+        Board.Instance.isSwapStarted = false;
     }
 
 

@@ -34,19 +34,18 @@ public class Candy : Tile
 
     private void OnMouseDown()
     {
-        //if (Board.Instance.isSwapped) return;
+        if (Board.Instance.isSwapStarted) return;
         if (Camera.main != null) _mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         _draggingStarted = true;
         _startPos = _mousePosition;
-        print(arrayPos);
         Board.Instance.selectedObject = arrayPos;
     }
 
     private void OnMouseDrag()
     {
-        
-        if (_draggingStarted)
+        if (_draggingStarted && !Board.Instance.isSwapStarted)
         {
+            print("OnMouseDrag" + gameObject.name);
             if (Camera.main != null) _endPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
             Vector2 difference = _endPos - _startPos;
@@ -65,24 +64,24 @@ public class Candy : Tile
                         ? Direction.Up
                         : Direction.Down;
                 }
+                Board.Instance.isSwapStarted = true;
             }
             else
             {
                 _direction = Direction.None;
             }
-            Board.Instance.isSwapped = true;
-
+           
         }
     }
 
     private async void OnMouseUp()
     {
+        
         _startPos = Vector2.zero;
         _endPos = Vector2.zero;
         _draggingStarted = false;
-
-
+        if (_direction == Direction.None) return;
         await Board.Instance.TileSwapCheck(Board.Instance.selectedObject, _direction);
-        Board.Instance.isSwapped = false;
+        
     }
 }

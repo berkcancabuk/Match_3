@@ -12,8 +12,8 @@ namespace Abstracts
     {
         public CandyType candyType = CandyType.Empty;
         public Vector2 arrayPos = Vector2.zero;
-        [SerializeField] protected ParticleSystem _particles;
-
+        public ParticleSystem _particles;
+       
         public abstract Tween ExplodingTile();
     }
 }
