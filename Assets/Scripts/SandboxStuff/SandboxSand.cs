@@ -12,7 +12,7 @@ public class SandboxSand : MonoBehaviour
 
     public Vector2 arrPos;
 
-
+    private bool isFreefalling = true;
     private void Start()
     {
         StartCoroutine(nameof(SwapChecker));
