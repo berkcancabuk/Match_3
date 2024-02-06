@@ -15,7 +15,7 @@ public class Board : MonoBehaviour
     [SerializeField] private MatchChecker _matchChecker;
     public TileMover _tileMover = new();
     private CandySettings _candySettings;
-
+    private ControlledRandomData _randData;
 
     [Header("Map Settings")] // Maybe to its own class
     public int column;
@@ -39,6 +39,7 @@ public class Board : MonoBehaviour
     // Maybe move it to another class
     [SerializeField] private CandyType[] _candyTypes;
     [SerializeField] private string _candyDefaultName;
+    [SerializeField] private int _levelCandyTypes;
 
     public Vector2 selectedObject;
 
@@ -89,7 +90,7 @@ public class Board : MonoBehaviour
                 _allBackGround[i, j] = backGroundTile.GetComponent<Tile>();
             }
         }
-
+        
         isReady = true;
         await StartFill(_explotionCheckCandies);
     }
@@ -176,6 +177,7 @@ public class Board : MonoBehaviour
 
             await _mySequence.Play().AsyncWaitForCompletion();
         }
+        _randData = new ControlledRandomData(_levelCandyTypes, allCandies);
     }
 
     private async UniTask ExplosionFill()
