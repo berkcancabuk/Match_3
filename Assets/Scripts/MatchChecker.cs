@@ -11,8 +11,9 @@ public class MatchChecker : MonoBehaviour
 {
     readonly List<Tile> xArray = new();
     readonly List<Tile> yArray = new();
-    
-    private async UniTask ConditionLoop(Tile[,] candies, List<Tile> arrayToAdd, int[] coordinates, int mainPos, int[] increase, int dimension)
+
+    private async UniTask ConditionLoop(Tile[,] candies, List<Tile> arrayToAdd, int[] coordinates, int mainPos,
+        int[] increase, int dimension)
     {
         var type = candies[coordinates[0], coordinates[1]].candyType;
 
@@ -21,8 +22,9 @@ public class MatchChecker : MonoBehaviour
         if (type.Equals(CandyType.Exploding))
         {
             while (BoundControl(mainPos, dimensionLength)
-                && candies[coordinates[0] + increase[0], coordinates[1] + increase[1]] != null
-                && !candies[coordinates[0] + increase[0], coordinates[1] + increase[1]].candyType.Equals(CandyType.Empty))
+                   && candies[coordinates[0] + increase[0], coordinates[1] + increase[1]] != null
+                   && !candies[coordinates[0] + increase[0], coordinates[1] + increase[1]].candyType
+                       .Equals(CandyType.Empty))
             {
                 mainPos += increase[0].Equals(0) ? increase[1] : increase[0];
                 arrayToAdd.Add(candies[coordinates[0] + increase[0], coordinates[1] + increase[1]]);
@@ -34,8 +36,8 @@ public class MatchChecker : MonoBehaviour
         else
         {
             while (BoundControl(mainPos, dimensionLength)
-                && candies[coordinates[0] + increase[0], coordinates[1] + increase[1]] != null
-                && candies[coordinates[0] + increase[0], coordinates[1] + increase[1]].candyType == type)
+                   && candies[coordinates[0] + increase[0], coordinates[1] + increase[1]] != null
+                   && candies[coordinates[0] + increase[0], coordinates[1] + increase[1]].candyType == type)
             {
                 mainPos += increase[0].Equals(0) ? increase[1] : increase[0];
                 arrayToAdd.Add(candies[coordinates[0] + increase[0], coordinates[1] + increase[1]]);
@@ -44,7 +46,6 @@ public class MatchChecker : MonoBehaviour
                 await UniTask.Delay(0);
             }
         }
-
     }
 
 
@@ -75,14 +76,15 @@ public class MatchChecker : MonoBehaviour
             xArray.Add(candy);
             xArray.AddRange(yArray);
             await DestroyCandies(xArray, null);
-            
+
             return true;
         }
-        
+
         await DestroyCandies(xArray, candy);
         await DestroyCandies(yArray, candy);
         return true;
     }
+
     public async UniTask<bool> CheckExplosion(Candy candy)
     {
         Tile[,] candies = Board.Instance.allCandies;
@@ -95,6 +97,7 @@ public class MatchChecker : MonoBehaviour
         {
             return false;
         }
+
         await ConditionLoop(candies, xArray, new int[] { x, y }, x, new int[] { 1, 0 }, 0);
         await ConditionLoop(candies, xArray, new int[] { x, y }, x, new int[] { -1, 0 }, -1);
         await ConditionLoop(candies, yArray, new int[] { x, y }, y, new int[] { 0, 1 }, 1);
@@ -105,52 +108,53 @@ public class MatchChecker : MonoBehaviour
         return true;
     }
 
-    //public async UniTask<List<Tile>> CheckMovedCandies(Candy candy)
-    //{
-    //    List<Tile> emptyTiles = new();
-    //    Tile[,] candies = Board.Instance.allCandies;
+    public async UniTask<List<Tile>> CheckMovedCandies()
+    {
+        List<Tile> emptyTiles = new();
+        Tile[,] candies = Board.Instance.allCandies;
 
-    //    xArray.Clear();
-    //    yArray.Clear();
-    //    var x = (int)candy.arrayPos.x;
-    //    var y = (int)candy.arrayPos.y;
-    //    if (candies[x, y] == null)
-    //    {
-    //        return emptyTiles;
-    //    }
-    //    await ConditionLoop(candies, xArray, new int[] { x, y }, x, new int[] { 1, 0 }, 0);
-    //    await ConditionLoop(candies, xArray, new int[] { x, y }, x, new int[] { -1, 0 }, -1);
-    //    await ConditionLoop(candies, yArray, new int[] { x, y }, y, new int[] { 0, 1 }, 1);
-    //    await ConditionLoop(candies, yArray, new int[] { x, y }, y, new int[] { 0, -1 }, -1);
+        foreach (var item in candies)
+        {
+            if (await CheckExplosion(item.GetComponent<Candy>()))
+            {
+                emptyTiles.Add(item);
+            }
+        }
 
-    //    if (xArray.Count < 2 && yArray.Count < 2)
-    //        return emptyTiles;
-        
-    //    if (xArray.Count > 2 && yArray.Count > 2)
-    //    {
-    //        xArray.Add(candy);
-    //        xArray.AddRange(yArray);
-    //        return xArray;
-    //    }
-    //    else if (xArray.Count > 2)
-    //    {
-    //        xArray.Add(candy);
-    //        return xArray;
-    //    }
-    //    else if (yArray.Count > 2)
-    //    {
-    //        yArray.Add(candy);
-    //        return yArray;
-    //    }
-    //    return emptyTiles;
-    //}
+        return emptyTiles;
+        // if (xArray.Count < 2 && yArray.Count < 2)
+        //     return emptyTiles;
+        //
+        // if (xArray.Count > 2 && yArray.Count > 2)
+        // {
+        //     xArray.Add(candy);
+        //     xArray.AddRange(yArray);
+        //     return xArray;
+        // }
+        //
+        // if (xArray.Count > 2)
+        // {
+        //     xArray.Add(candy);
+        //     return xArray;
+        // }
+        //
+        // if (yArray.Count > 2)
+        // {
+        //     yArray.Add(candy);
+        //     return yArray;
+        // }
+        //
+        // return emptyTiles;
+    }
 
-    public async UniTask DestroyCandies(List<Tile> candies,Candy candys)
+
+    public async UniTask DestroyCandies(List<Tile> candies, Candy candys)
     {
         if (candies.Count < 2)
         {
             return;
         }
+
         if (candys != null) candies.Add(candys);
         Debug.Log("Started");
         Sequence sequence = DOTween.Sequence();
@@ -168,11 +172,5 @@ public class MatchChecker : MonoBehaviour
         await UniTask.Yield(0);
         EventManager.OnAddScore?.Invoke(candies.Count);
         EventManager.OnPlaySound?.Invoke();
-       
     }
-    
-    
 }
-
-
-
