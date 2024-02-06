@@ -23,7 +23,7 @@ public class Candy : Tile
     {
         if (_particles != null)
             GetComponentInChildren<ParticleSystem>().Play();
-        return transform.DOScale(new Vector3(.5f, .5f, .5f), 0.4f)
+        return transform.DOScale(new Vector3(.5f, .5f, .5f), 0.2f)
             .SetEase(Ease.InBounce).OnComplete(() => Destroy(gameObject));
     }
 
@@ -34,7 +34,8 @@ public class Candy : Tile
 
     private void OnMouseDown()
     {
-        if (Board.Instance.isSwapStarted) return;
+        
+        if (Board.Instance.isSwapStarted||candyType == CandyType.Empty) return;
         if (Camera.main != null) _mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         _draggingStarted = true;
         _startPos = _mousePosition;
@@ -43,9 +44,8 @@ public class Candy : Tile
 
     private void OnMouseDrag()
     {
-        if (_draggingStarted && !Board.Instance.isSwapStarted)
+        if (_draggingStarted && !Board.Instance.isSwapStarted && candyType != CandyType.Empty)
         {
-            print("OnMouseDrag" + gameObject.name);
             if (Camera.main != null) _endPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
             Vector2 difference = _endPos - _startPos;
@@ -64,7 +64,7 @@ public class Candy : Tile
                         ? Direction.Up
                         : Direction.Down;
                 }
-                Board.Instance.isSwapStarted = true;
+                
             }
             else
             {
@@ -80,7 +80,7 @@ public class Candy : Tile
         _startPos = Vector2.zero;
         _endPos = Vector2.zero;
         _draggingStarted = false;
-        if (_direction == Direction.None) return;
+        if (_direction == Direction.None || Board.Instance.isSwapStarted || candyType == CandyType.Empty) return;
         await Board.Instance.TileSwapCheck(Board.Instance.selectedObject, _direction);
         
     }

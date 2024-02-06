@@ -5,6 +5,7 @@ using Cysharp.Threading.Tasks;
 using Abstracts;
 using DG.Tweening;
 using Enums;
+using Unity.Mathematics;
 using UnityEngine;
 
 public class MatchChecker : MonoBehaviour
@@ -12,11 +13,14 @@ public class MatchChecker : MonoBehaviour
     readonly List<Tile> xArray = new();
     readonly List<Tile> yArray = new();
 
+
+    private bool isSpecialCondition = false;
     private async UniTask ConditionLoop(Tile[,] candies, List<Tile> arrayToAdd, int[] coordinates, int mainPos,
         int[] increase, int dimension)
     {
         var type = candies[coordinates[0], coordinates[1]].candyType;
 
+        
         int dimensionLength = dimension == -1 ? -1 : candies.GetLength(dimension);
 
         if (type.Equals(CandyType.Exploding))
@@ -32,6 +36,8 @@ public class MatchChecker : MonoBehaviour
                 coordinates[1] += increase[1];
                 await UniTask.Delay(0);
             }
+
+            isSpecialCondition = true;
         }
         else
         {
@@ -71,6 +77,34 @@ public class MatchChecker : MonoBehaviour
         if (xArray.Count < 2 && yArray.Count < 2)
             return false;
 
+        if (!isSpecialCondition)
+        {
+            if (xArray.Count >= 4 || yArray.Count >= 4)
+            {
+                if (yArray.Count >= 4)
+                {
+                    yArray.Add(candy);
+                    await CheckSpecialCandy(yArray);
+                    if (xArray.Count < 4 && xArray.Count >= 2)
+                    {
+                        await DestroyCandies(xArray, null);
+                        return true;
+                    }
+                }
+
+                if (xArray.Count >= 4)
+                {
+                    xArray.Add(candy);
+                    await CheckSpecialCandy(xArray);
+                    if (yArray.Count < 4 && yArray.Count >= 2)
+                    {
+                        await DestroyCandies(yArray, null);
+                        return true;
+                    }
+                }
+            }
+        }
+
         if (xArray.Count >= 2 && yArray.Count >= 2)
         {
             xArray.Add(candy);
@@ -85,7 +119,7 @@ public class MatchChecker : MonoBehaviour
         return true;
     }
 
-    public async UniTask<bool> CheckExplosion(Candy candy)
+    public async UniTask<bool> CheckStartExplosion(Candy candy)
     {
         Tile[,] candies = Board.Instance.allCandies;
 
@@ -115,36 +149,12 @@ public class MatchChecker : MonoBehaviour
 
         foreach (var item in candies)
         {
-            if (await CheckExplosion(item.GetComponent<Candy>()))
-            {
-                emptyTiles.Add(item);
-            }
+            if (!await CheckStartExplosion(item.GetComponent<Candy>())) continue;
+            if (emptyTiles.Contains(item) || item.candyType == CandyType.Exploding) continue;
+            emptyTiles.Add(item);
         }
 
         return emptyTiles;
-        // if (xArray.Count < 2 && yArray.Count < 2)
-        //     return emptyTiles;
-        //
-        // if (xArray.Count > 2 && yArray.Count > 2)
-        // {
-        //     xArray.Add(candy);
-        //     xArray.AddRange(yArray);
-        //     return xArray;
-        // }
-        //
-        // if (xArray.Count > 2)
-        // {
-        //     xArray.Add(candy);
-        //     return xArray;
-        // }
-        //
-        // if (yArray.Count > 2)
-        // {
-        //     yArray.Add(candy);
-        //     return yArray;
-        // }
-        //
-        // return emptyTiles;
     }
 
 
@@ -156,13 +166,11 @@ public class MatchChecker : MonoBehaviour
         }
 
         if (candys != null) candies.Add(candys);
-        Debug.Log("Started");
         Sequence sequence = DOTween.Sequence();
         foreach (var candy in candies)
         {
             if (candy == null)
                 continue;
-            Debug.Log("Adding" + candy.name);
             candy.candyType = CandyType.Empty;
             Board.Instance.MakeTileNull((int)candy.arrayPos.x, (int)candy.arrayPos.y);
             sequence.Join(candy.ExplodingTile());
@@ -170,7 +178,42 @@ public class MatchChecker : MonoBehaviour
 
         sequence.Play();
         await UniTask.Yield(0);
+        if (isSpecialCondition)
+        {
+            isSpecialCondition = false;
+        }
         EventManager.OnAddScore?.Invoke(candies.Count);
         EventManager.OnPlaySound?.Invoke();
     }
+
+    private async UniTask CheckSpecialCandy(List<Tile> candies)
+    {
+        var midPos = Vector2.zero;
+        for (int i = 0; i < candies.Count; i++)
+        {
+            midPos += candies[i].arrayPos;
+        }
+        midPos /= candies.Count;
+
+        midPos = new Vector2(Mathf.FloorToInt(midPos.x), Mathf.FloorToInt(midPos.y));
+        Sequence sequence = DOTween.Sequence();
+        foreach (var candy in candies)
+        {
+            if (candy == null)
+                continue;
+            candy.candyType = CandyType.Empty;
+            Board.Instance.MakeTileNull((int)candy.arrayPos.x, (int)candy.arrayPos.y);
+            sequence.Join(candy.ExplodingTile());
+        }
+        
+        await sequence.Play().AsyncWaitForCompletion();
+        
+        Board.Instance.SetMidSpecialCandy(midPos);
+         
+             
+        EventManager.OnAddScore?.Invoke(candies.Count);
+        EventManager.OnPlaySound?.Invoke();
+        
+        
+    } 
 }

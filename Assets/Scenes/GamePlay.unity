@@ -1312,12 +1312,13 @@ MonoBehaviour:
   parentCandy: {fileID: 1691107620}
   parentTile: {fileID: 1528675351}
   candyPrefab: {fileID: 8076060634908614641, guid: 9e74910bd5377624c9abf6553dd8fdc8, type: 3}
+  candyExplosion: {fileID: 4055512074223825493, guid: ad8486190d358404785cd1ed388c63bc, type: 3}
   _candySprites:
   - {fileID: -1448123593, guid: 3f48832aa39dd1041913f3b9b09fc3db, type: 3}
   - {fileID: 400154341, guid: 3f48832aa39dd1041913f3b9b09fc3db, type: 3}
   - {fileID: 925766059, guid: 3f48832aa39dd1041913f3b9b09fc3db, type: 3}
   - {fileID: 200647705, guid: 3f48832aa39dd1041913f3b9b09fc3db, type: 3}
-  isSwapped: 0
+  isSwapStarted: 0
   _candyTypes: 00000000010000000200000003000000
   _candyDefaultName: Candy_
   selectedObject: {x: 0, y: 0}

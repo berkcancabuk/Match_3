@@ -279,7 +279,7 @@ public class Board : MonoBehaviour
         // When given in the if condition it DOES NOT check both of the candies
         if (candy.candyType.Equals(CandyType.Exploding) && await _matchChecker.CheckExplosion((Candy)candy, allCandies)) 
          {
-            await Task.Delay(400);
+            await Task.Delay(200);
             await _tileMover.TileBottomMovement(allCandies);
             return;
         }
@@ -290,7 +290,7 @@ public class Board : MonoBehaviour
             // Swap back
            await Swap(candy, secondCandy);
         }
-        await Task.Delay(400);
+        await Task.Delay(200);
         await _tileMover.TileBottomMovement(allCandies);
     }
 

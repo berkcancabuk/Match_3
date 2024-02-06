@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Abstracts;
 using DG.Tweening;
 using Enums;
@@ -31,6 +32,7 @@ public class Board : MonoBehaviour
     private Transform parentCandy, parentTile;
 
     [SerializeField] private GameObject candyPrefab;
+    [SerializeField] private GameObject candyExplosion;
     [SerializeField] private Sprite[] _candySprites;
     public bool isSwapStarted;
 
@@ -121,9 +123,10 @@ public class Board : MonoBehaviour
         {
             sequencer.Join(ExplodingTile(item.GetComponent<Candy>()));
         }
-
+        EventManager.OnAddScore?.Invoke(_candiesToExplode.Count);
+        EventManager.OnPlaySound?.Invoke();
         await sequencer.AsyncWaitForCompletion();
-        await UniTask.Delay(400);
+        await UniTask.Delay(300);
         await _tileMover.TileBottomMovement(allCandies);
     }
 
@@ -131,7 +134,7 @@ public class Board : MonoBehaviour
     {
         if (candy._particles != null)
             candy.GetComponentInChildren<ParticleSystem>().Play();
-        return candy.transform.DOScale(new Vector3(.5f, .5f, .5f), 0.4f)
+        return candy.transform.DOScale(new Vector3(.5f, .5f, .5f), 0.3f)
             .SetEase(Ease.InBounce).OnComplete(() => Destroy(candy.gameObject));
     }
 
@@ -161,7 +164,7 @@ public class Board : MonoBehaviour
                         candy.gameObject.name = _candyDefaultName + candySettings.Item2 + " " + j + "," + i;
                         count++;
 
-                        if (!await _matchChecker.CheckExplosion(candy.GetComponent<Candy>()))
+                        if (!await _matchChecker.CheckStartExplosion(candy.GetComponent<Candy>()))
                         {
                             break;
                         }
@@ -210,6 +213,18 @@ public class Board : MonoBehaviour
         await _mySequence.Play().AsyncWaitForCompletion();
     }
 
+    public async UniTask SetMidSpecialCandy(Vector2 midPos)
+    {
+        var x = (int)midPos.x;
+        var y = (int)midPos.y;
+        var candy = Instantiate(candyExplosion, midPos,
+            Quaternion.identity, parentCandy);
+        candy.gameObject.name = "SpecialCandy" + "-> " + x+" - "+y;
+        allCandies[x, y] = candy.GetComponent<Tile>();
+        allCandies[x, y].arrayPos = midPos;
+        allCandies[x, y].candyType = CandyType.Exploding;
+    }
+
 
     private void MoveCandy(Transform candy, int column, int row)
     {
@@ -250,6 +265,7 @@ public class Board : MonoBehaviour
     // Check with the direction
     public async UniTask TileSwapCheck(Vector2 pos, Direction moveDir)
     {
+        isSwapStarted = true;
         var x = (int)pos.x;
         var y = (int)pos.y;
         Tile candy = allCandies[x, y];
@@ -263,13 +279,13 @@ public class Board : MonoBehaviour
                 secondCandy = allCandies[x, y];
                 break;
             case Direction.Up:
-                if (y + 1 > column + 1) return;
+                if (y + 1 >= row) return;
                 if (allCandies[x, y].gameObject == null || allCandies[x, y + 1].gameObject == null) return;
                 await Swap(allCandies[x, y], allCandies[x, y + 1]);
                 secondCandy = allCandies[x, y];
                 break;
             case Direction.Right:
-                if (x + 1 > row) return;
+                if (x + 1 >= column) return;
                 if (allCandies[x, y].gameObject == null || allCandies[x + 1, y].gameObject == null) return;
                 await Swap(allCandies[x, y], allCandies[x + 1, y]);
                 secondCandy = allCandies[x, y];
@@ -281,7 +297,6 @@ public class Board : MonoBehaviour
                 secondCandy = allCandies[x, y];
                 break;
             case Direction.None:
-                
                 isSwapStarted = false;
                 return;
         }
@@ -290,23 +305,32 @@ public class Board : MonoBehaviour
         // Exploding candies block Should change it to support more special candies
         if (candy.candyType.Equals(CandyType.Exploding) && await _matchChecker.CheckExplosion((Candy)candy, allCandies))
         {
-            await UniTask.Delay(400);
-            await _tileMover.TileBottomMovement(allCandies);
+            await MovementBottomCheckDelay();
             return;
         }
 
-        bool condition1 = !await _matchChecker.CheckExplosion((Candy)candy, allCandies);
-        bool condition2 = !await _matchChecker.CheckExplosion((Candy)secondCandy, allCandies);
-        if (condition1 && condition2 && isSwapStarted)
-        {
-            // Swap back
-            await Swap(candy, secondCandy);
-            isSwapStarted = false;
-            return;
-        }
+        if (await CheckSwappable(candy, secondCandy)) return;
 
-        await UniTask.Delay(400);
+        await MovementBottomCheckDelay();
+    }
+
+    private async Task<bool> CheckSwappable(Tile candy, Tile secondCandy)
+    {
+        var condition1 = !await _matchChecker.CheckExplosion((Candy)candy, allCandies);
+        var condition2 = !await _matchChecker.CheckExplosion((Candy)secondCandy, allCandies);
+        if (!condition1 || !condition2) return false;
+        // Swap back
+        await Swap(candy, secondCandy);
+        isSwapStarted = false;
+        return true;
+
+    }
+
+    private async Task MovementBottomCheckDelay()
+    {
+        await UniTask.Delay(300);
         await _tileMover.TileBottomMovement(allCandies);
+        isSwapStarted = false;
     }
 
     public void MakeTileNull(int x, int y)
