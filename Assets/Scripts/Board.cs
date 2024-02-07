@@ -170,14 +170,14 @@ public class Board : MonoBehaviour
                             break;
                         }
                     }
-
+                    _explotionCheckCandies.Add(candy.GetComponent<Candy>());
                     MoveCandy(candy.transform, i, j);
                 }
             }
 
             await _mySequence.Play().AsyncWaitForCompletion();
         }
-        _randData = new ControlledRandomData(_levelCandyTypes, allCandies);
+       _randData = new ControlledRandomData(_levelCandyTypes, _explotionCheckCandies);
     }
 
     private async UniTask ExplosionFill()

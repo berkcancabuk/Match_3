@@ -4,6 +4,7 @@ using Unity;
 using System.Collections.Generic;
 using Abstracts;
 using Unity.VisualScripting;
+using System;
 
 public class ControlledRandomData
 {
@@ -73,7 +74,7 @@ public class ControlledRandomData
     // Blue 0, Green 1, Purple 2, Red 3
     public void SetRatiosOfCandies(List<Tile> candies)
     {
-        candyCounts = new int[candyCounts.Length];
+        candyCounts = new int[_candyTypeCount];
         for (int i = 0; i < candies.Count; i++)
         {
             Tile item = candies[i];
@@ -102,6 +103,8 @@ public class ControlledRandomData
         {
             randomCandyRatios[i] = candyCounts[i] * (1 / totalCandies);
         }
+
+
     }
     private int TotalCount(int[] arr)
     {
@@ -116,7 +119,7 @@ public class ControlledRandomData
 
     bool GetItem(int percent)
     {
-        int rand = Random.Range(0, 100);
+        int rand = UnityEngine.Random.Range(0, 100);
         return rand < percent;
     }
 
