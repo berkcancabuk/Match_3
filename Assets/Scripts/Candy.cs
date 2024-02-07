@@ -17,13 +17,14 @@ public class Candy : Tile
     Vector3 _mousePosition;
 
     
+    
 
     [ContextMenu("TestScaling")] 
     public override Tween ExplodingTile()
     {
         if (_particles != null)
             GetComponentInChildren<ParticleSystem>().Play();
-        return transform.DOScale(new Vector3(.5f, .5f, .5f), 0.2f)
+        return transform.DOScale(new Vector3(.5f, .5f, .5f), Board.Instance.lastDeltaTime)
             .SetEase(Ease.InBounce).OnComplete(() => Destroy(gameObject));
     }
 

@@ -49,8 +49,7 @@ public class TileMover
                 m_candyQueue.Enqueue(t);
             }
         }
-
-        await UniTask.Delay(0);
+        
         Board.Instance.SetReady(true);
         await Board.Instance.FillEmptyTile();
         

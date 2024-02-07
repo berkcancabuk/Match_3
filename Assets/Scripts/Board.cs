@@ -49,6 +49,9 @@ public class Board : MonoBehaviour
 
     private List<Tile> _candiesToExplode = new();
 
+    private const float SCALE_DURATION = 10;
+
+    public float lastDeltaTime = 0; 
     private void Awake()
     {
         if (Instance != null)
@@ -93,9 +96,11 @@ public class Board : MonoBehaviour
         
         isReady = true;
         await StartFill(_explotionCheckCandies);
+        Application.targetFrameRate = 60;
+        lastDeltaTime =  30*Time.fixedDeltaTime;
+        print(lastDeltaTime);
+        
     }
-
-
     public async UniTask FillEmptyTile()
     {
         if (!isReady)
@@ -103,6 +108,7 @@ public class Board : MonoBehaviour
             return;
         }
 
+        
         await ExplosionFill();
         var sequencer = DOTween.Sequence();
         // Used to reset and for not exploding untouched candies
@@ -127,7 +133,7 @@ public class Board : MonoBehaviour
         EventManager.OnAddScore?.Invoke(_candiesToExplode.Count);
         EventManager.OnPlaySound?.Invoke();
         await sequencer.AsyncWaitForCompletion();
-        await UniTask.Delay(300);
+        await UniTask.Delay((int)(lastDeltaTime*1000));
         await _tileMover.TileBottomMovement(allCandies);
     }
 
@@ -135,7 +141,7 @@ public class Board : MonoBehaviour
     {
         if (candy._particles != null)
             candy.GetComponentInChildren<ParticleSystem>().Play();
-        return candy.transform.DOScale(new Vector3(.5f, .5f, .5f), 0.3f)
+        return candy.transform.DOScale(new Vector3(.5f, .5f, .5f), lastDeltaTime)
             .SetEase(Ease.InBounce).OnComplete(() => Destroy(candy.gameObject));
     }
 
@@ -145,6 +151,7 @@ public class Board : MonoBehaviour
         _explotionCheckCandies.Clear();
         for (int i = 0; i < row; i++)
         {
+            _mySequence.Kill();
             _mySequence = DOTween.Sequence();
             for (int j = 0; j < column; j++)
             {
@@ -152,8 +159,6 @@ public class Board : MonoBehaviour
                 {
                     var candy = Instantiate(candyPrefab, new Vector2(j, row + 1),
                         Quaternion.identity, parentCandy);
-                    int random = Random.Range(0, _candyTypes.Length);
-
                     allCandies[j, i] = candy.GetComponent<Tile>();
                     allCandies[j, i].arrayPos = new Vector2(j, i);
                     int count = 0;
@@ -177,7 +182,7 @@ public class Board : MonoBehaviour
 
             await _mySequence.Play().AsyncWaitForCompletion();
         }
-       _randData = new ControlledRandomData(_levelCandyTypes, _explotionCheckCandies);
+        _randData = new ControlledRandomData(_levelCandyTypes, _explotionCheckCandies);
     }
 
     private async UniTask ExplosionFill()
@@ -196,7 +201,7 @@ public class Board : MonoBehaviour
 
                     var candy = Instantiate(candyPrefab, new Vector2(j, row + 1),
                         Quaternion.identity, parentCandy);
-                    int random = Random.Range(0, _candyTypes.Length);
+                    
 
                     Tuple<Sprite, CandyType> candySettings = _candySettings.GetRandomStyle();
 
@@ -230,11 +235,12 @@ public class Board : MonoBehaviour
 
     private void MoveCandy(Transform candy, int column, int row)
     {
-        Tween move = candy.DOMove(new Vector2(row, column), TWEEN_DURATION);
+        Tween move = candy.DOMove(new Vector2(row, column), .5f);
+       
         _mySequence.Join(move);
     }
 
-    private const float TWEEN_DURATION = 0.2f;
+    private const float TWEEN_DURATION = 10f;
 
     private async UniTask Swap(Tile obj1, Tile obj2)
     {
@@ -246,8 +252,8 @@ public class Board : MonoBehaviour
         allCandies[(int)obj2.arrayPos.x, (int)obj2.arrayPos.y] = obj2;
         allCandies[(int)obj1.arrayPos.x, (int)obj1.arrayPos.y] = tempObj;
         
-        _mySequence.Join(obj1.transform.DOMove(obj2.transform.position, TWEEN_DURATION))
-            .Join(obj2.transform.DOMove(obj1.transform.position, TWEEN_DURATION));
+        _mySequence.Join(obj1.transform.DOMove(obj2.transform.position, lastDeltaTime))
+            .Join(obj2.transform.DOMove(obj1.transform.position, lastDeltaTime));
         await _mySequence.Play().AsyncWaitForCompletion();
     }
 
@@ -330,7 +336,7 @@ public class Board : MonoBehaviour
 
     private async Task MovementBottomCheckDelay()
     {
-        await UniTask.Delay(300);
+        await UniTask.Delay((int)(lastDeltaTime*1000));
         await _tileMover.TileBottomMovement(allCandies);
         isSwapStarted = false;
     }
@@ -344,7 +350,7 @@ public class Board : MonoBehaviour
     {
         if (allCandies[x, y].candyType == CandyType.Empty) return;
         allCandies[x, y - 1] = allCandies[x, y];
-        allCandies[x, y - 1].gameObject.transform.DOMove(new Vector2(x, y - 1), TWEEN_DURATION);
+        allCandies[x, y - 1].gameObject.transform.DOMove(new Vector2(x, y - 1), lastDeltaTime);
         allCandies[x, y - 1].candyType = allCandies[x, y].candyType;
         allCandies[x, y - 1].arrayPos = new Vector2(x, y - 1);
         allCandies[x, y] = null;

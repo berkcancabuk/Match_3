@@ -13,7 +13,7 @@ public class MatchChecker : MonoBehaviour
     readonly List<Tile> xArray = new();
     readonly List<Tile> yArray = new();
 
-
+    Sequence sequence = DOTween.Sequence();
     private bool isSpecialCondition = false;
     private async UniTask ConditionLoop(Tile[,] candies, List<Tile> arrayToAdd, int[] coordinates, int mainPos,
         int[] increase, int dimension)
@@ -34,7 +34,6 @@ public class MatchChecker : MonoBehaviour
                 arrayToAdd.Add(candies[coordinates[0] + increase[0], coordinates[1] + increase[1]]);
                 coordinates[0] += increase[0];
                 coordinates[1] += increase[1];
-                await UniTask.Delay(0);
             }
 
             isSpecialCondition = true;
@@ -49,7 +48,6 @@ public class MatchChecker : MonoBehaviour
                 arrayToAdd.Add(candies[coordinates[0] + increase[0], coordinates[1] + increase[1]]);
                 coordinates[0] += increase[0];
                 coordinates[1] += increase[1];
-                await UniTask.Delay(0);
             }
         }
     }
@@ -147,6 +145,7 @@ public class MatchChecker : MonoBehaviour
         List<Tile> emptyTiles = new();
         Tile[,] candies = Board.Instance.allCandies;
 
+        
         foreach (var item in candies)
         {
             if (!await CheckStartExplosion(item.GetComponent<Candy>())) continue;
@@ -166,7 +165,9 @@ public class MatchChecker : MonoBehaviour
         }
 
         if (candys != null) candies.Add(candys);
-        Sequence sequence = DOTween.Sequence();
+        
+        sequence.Kill();
+        sequence = DOTween.Sequence();
         foreach (var candy in candies)
         {
             if (candy == null)
@@ -176,8 +177,7 @@ public class MatchChecker : MonoBehaviour
             sequence.Join(candy.ExplodingTile());
         }
 
-        sequence.Play();
-        await UniTask.Yield(0);
+        await sequence.Play().AsyncWaitForCompletion();
         if (isSpecialCondition)
         {
             isSpecialCondition = false;
@@ -196,7 +196,8 @@ public class MatchChecker : MonoBehaviour
         midPos /= candies.Count;
 
         midPos = new Vector2(Mathf.FloorToInt(midPos.x), Mathf.FloorToInt(midPos.y));
-        Sequence sequence = DOTween.Sequence();
+        sequence.Kill();
+        sequence = DOTween.Sequence();
         foreach (var candy in candies)
         {
             if (candy == null)
@@ -208,7 +209,7 @@ public class MatchChecker : MonoBehaviour
         
         await sequence.Play().AsyncWaitForCompletion();
         
-        Board.Instance.SetMidSpecialCandy(midPos);
+        await Board.Instance.SetMidSpecialCandy(midPos);
          
              
         EventManager.OnAddScore?.Invoke(candies.Count);

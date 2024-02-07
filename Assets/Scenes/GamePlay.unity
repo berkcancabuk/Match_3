@@ -1321,6 +1321,7 @@ MonoBehaviour:
   isSwapStarted: 0
   _candyTypes: 00000000010000000200000003000000
   _candyDefaultName: Candy_
+  _levelCandyTypes: 4
   selectedObject: {x: 0, y: 0}
 --- !u!4 &1528675351
 Transform:
