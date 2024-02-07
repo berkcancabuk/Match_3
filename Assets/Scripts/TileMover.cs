@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using Abstracts;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
@@ -33,12 +32,14 @@ public class TileMover
         Queue<Tile> m_candyQueue = new();
         m_allCandies = candies;
         AddRange(m_candyQueue, m_allCandies);
+        Debug.Log(m_candyQueue.Count + " candyQueue");
         while (m_candyQueue.Count > 0 )
         { 
             Tile t = m_candyQueue.Dequeue();
 
             if (t == null || (int)t.arrayPos.y <= 0)
                 continue;
+                
 
             int x = (int)t.arrayPos.x;
             int y = (int)t.arrayPos.y;
@@ -54,12 +55,13 @@ public class TileMover
         await Board.Instance.FillEmptyTile();
         
     }
-
-
+    
+    
     private bool TileBottomCheck(int x, int y)
     {
         if ( m_allCandies[x,y-1] == null)
         {
+            
             return true;
         }
         return false;

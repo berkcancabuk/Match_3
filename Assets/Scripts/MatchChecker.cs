@@ -1,11 +1,8 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using Cysharp.Threading.Tasks;
 using Abstracts;
 using DG.Tweening;
 using Enums;
-using Unity.Mathematics;
 using UnityEngine;
 
 public class MatchChecker : MonoBehaviour
@@ -13,7 +10,7 @@ public class MatchChecker : MonoBehaviour
     readonly List<Tile> xArray = new();
     readonly List<Tile> yArray = new();
 
-    Sequence sequence = DOTween.Sequence();
+    private Sequence sequence;
     private bool isSpecialCondition = false;
     private async UniTask ConditionLoop(Tile[,] candies, List<Tile> arrayToAdd, int[] coordinates, int mainPos,
         int[] increase, int dimension)
@@ -166,7 +163,7 @@ public class MatchChecker : MonoBehaviour
 
         if (candys != null) candies.Add(candys);
         
-        sequence.Kill();
+      
         sequence = DOTween.Sequence();
         foreach (var candy in candies)
         {
@@ -196,7 +193,7 @@ public class MatchChecker : MonoBehaviour
         midPos /= candies.Count;
 
         midPos = new Vector2(Mathf.FloorToInt(midPos.x), Mathf.FloorToInt(midPos.y));
-        sequence.Kill();
+        
         sequence = DOTween.Sequence();
         foreach (var candy in candies)
         {
@@ -208,7 +205,6 @@ public class MatchChecker : MonoBehaviour
         }
         
         await sequence.Play().AsyncWaitForCompletion();
-        
         await Board.Instance.SetMidSpecialCandy(midPos);
          
              

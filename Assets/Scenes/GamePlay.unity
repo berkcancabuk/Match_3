@@ -1318,11 +1318,12 @@ MonoBehaviour:
   - {fileID: 400154341, guid: 3f48832aa39dd1041913f3b9b09fc3db, type: 3}
   - {fileID: 925766059, guid: 3f48832aa39dd1041913f3b9b09fc3db, type: 3}
   - {fileID: 200647705, guid: 3f48832aa39dd1041913f3b9b09fc3db, type: 3}
-  isSwapStarted: 0
+  isSwapStarted: 1
   _candyTypes: 00000000010000000200000003000000
   _candyDefaultName: Candy_
   _levelCandyTypes: 4
   selectedObject: {x: 0, y: 0}
+  lastDeltaTime: 0
 --- !u!4 &1528675351
 Transform:
   m_ObjectHideFlags: 0
