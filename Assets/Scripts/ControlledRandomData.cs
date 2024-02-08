@@ -70,7 +70,8 @@ public class ControlledRandomData
             randomCandyRatios[i] = candyCounts[i] * (1 / totalCandies);
         }
     }
-    // Candy counts are not known set them beforehand
+
+    // Candy counts are not known set them beforehand spawning
     // Blue 0, Green 1, Purple 2, Red 3
     public void SetRatiosOfCandies(List<Tile> candies)
     {

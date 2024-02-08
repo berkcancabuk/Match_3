@@ -112,23 +112,35 @@ public class Board : MonoBehaviour
         _candiesToExplode.Clear();
 
         _candiesToExplode = await _matchChecker.CheckMovedCandies();
+
         if (_candiesToExplode.Count < 2)
         {
             return;
         }
+        _mySequence = DOTween.Sequence();
+
         foreach (var item in _candiesToExplode)
         {
             _mySequence.Join(ExplodingTile(item.GetComponent<Candy>()));
         }
         EventManager.OnAddScore?.Invoke(_candiesToExplode.Count);
         EventManager.OnPlaySound?.Invoke();
+
+        // Append a function at the end of the anim cycle 
+        //
+        _mySequence.AppendCallback(async () => {
+            await UniTask.Delay(10);
+            await _tileMover.TileBottomMovement(allCandies);
+        });
         _mySequence.Play();
-        while (!_mySequence.IsComplete())
-        {
-            await UniTask.Delay(0);
-        }
+
+        // 
+        //while (!_mySequence.IsComplete)
+        //{
+        //    await UniTask.Delay(0);
+        //}
         //await UniTask.Delay((int)(lastDeltaTime*1000));
-        await _tileMover.TileBottomMovement(allCandies);
+        //await _tileMover.TileBottomMovement(allCandies);
     }
 
     private Tween ExplodingTile(Candy candy)
@@ -138,8 +150,12 @@ public class Board : MonoBehaviour
         return candy.transform.DOScale(new Vector3(.5f, .5f, .5f), lastDeltaTime)
             .SetEase(Ease.InBounce).OnComplete(() => Destroy(candy.gameObject));
     }
-
-
+    
+    private async void WaitSequence()
+    {
+        await _mySequence.Play().AsyncWaitForCompletion();
+        return;
+    }
     private async UniTask StartFill(List<Tile> tiles)
     {
         _explotionCheckCandies.Clear();
