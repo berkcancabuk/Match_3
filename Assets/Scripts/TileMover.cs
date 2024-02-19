@@ -29,10 +29,10 @@ public class TileMover
 
     public async UniTask TileBottomMovement(Tile[,] candies)
     {
+        Board.Instance.isSwapStarted = true;
         Queue<Tile> m_candyQueue = new();
         m_allCandies = candies;
         AddRange(m_candyQueue, m_allCandies);
-        Debug.Log(m_candyQueue.Count + " candyQueue");
         while (m_candyQueue.Count > 0 )
         { 
             Tile t = m_candyQueue.Dequeue();
@@ -53,7 +53,7 @@ public class TileMover
         
         Board.Instance.SetReady(true);
         await Board.Instance.FillEmptyTile();
-        
+        Board.Instance.isSwapStarted = false;
     }
     
     

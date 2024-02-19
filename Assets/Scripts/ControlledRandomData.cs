@@ -1,127 +1,103 @@
-﻿using Enums;
-using UnityEngine;
-using Unity;
+﻿using System;
+using Enums;
 using System.Collections.Generic;
+using System.Linq;
 using Abstracts;
-using Unity.VisualScripting;
-using System;
+using UnityEngine;
+using UnityEngine.PlayerLoop;
+using Random = UnityEngine.Random;
 
 public class ControlledRandomData
 {
-    int[] candyCounts;
+    
     float[] randomCandyRatios;
     int _candyTypeCount;
 
-    CandyType[] _typeArray;
+    private int _candyCounts;
+    private CandyType[] _typeArray;
+    private CandyType _dominantCandy;
 
+    private Dictionary<Tuple<int,int>, CandyType> candyTable = new Dictionary<Tuple<int,int>, CandyType>(); 
 
-    public ControlledRandomData(int candyTypeCount, List<Tile> candies)
+    public ControlledRandomData(int candyCount,CandyType dominantCandy, params CandyType[] candyTypes)
     {
-        candyCounts = new int[candyTypeCount];
-        randomCandyRatios = new float[candyTypeCount];
-        this._candyTypeCount = candyTypeCount;
-        _typeArray = new CandyType[]{ CandyType.Blue, CandyType.Green, CandyType.Purple, CandyType.Red };
-        SetRatiosOfCandies(candies);
+        this._candyCounts = candyCount;
+        this._typeArray = candyTypes;
+        this._dominantCandy = dominantCandy;
+        
+        ArrayAssignCandyTypes();
+        
     }
 
-    public ControlledRandomData(int[] candyCounts, float[] randomCandyRatios, int candyTypeCount, CandyType[] typeArray)
-    {
-        this.candyCounts = candyCounts;
-        this.randomCandyRatios = randomCandyRatios;
-        _candyTypeCount = candyTypeCount;
-        _typeArray = typeArray;
-    }
 
-    public ControlledRandomData()
-    {
-        //Empty Constructor
-        _typeArray = new CandyType[] { CandyType.Blue, CandyType.Green, CandyType.Purple, CandyType.Red };
-    }
 
-    public CandyType GetLowestRatio()
+    public void PrintCandies()
     {
-
-        int index = 0;
-        float lowest = Mathf.Infinity;
-        for (int i = 0; i < randomCandyRatios.Length; i++)
+        foreach (var candy in candyTable)
         {
-            if (randomCandyRatios[i] < lowest)
+            Debug.Log("Candy Type = " + candy.Value 
+            + " Place = " + candy.Key);
+        }
+    }
+
+    public CandyType GetCandyTypeOfIndex(Tuple<int, int> index)
+    {
+        return candyTable[index];
+    }
+    public void ArrayAssignCandyTypes()
+    {
+
+        int rand = Random.Range(0, _typeArray.Length);
+        CandyType domType = _typeArray[rand];
+        List<CandyType> types = _typeArray.ToList();
+        types.Remove(domType);
+        int resetCount = 0;
+        int dominantCount = DominantCalc();
+        int normalCount = NonDominantCalc();
+
+        for (int i = 0; i < _candyCounts; i++)
+        {
+            int x;
+            int y;
+            while (true)
             {
-                lowest = randomCandyRatios[i];
-                index = i;
+                x = Random.Range(0, 5);
+                y = Random.Range(0, 7);
+
+                if (!candyTable.ContainsKey(new Tuple<int, int>(x, y)))
+                {
+                    break;
+                }
             }
-        }
 
-        //return lowest;
-
-        return _typeArray[index];
-    }
-
-    // Berkcancan burada mı buldurak yoksa boarddan mı alaq
-    // Overload yaptım agla
-    // Candy counts already known 
-    public void SetRatiosOfCandies(int[] candyCounts)
-    {
-        this.candyCounts = candyCounts;
-        int totalCandies = TotalCount(this.candyCounts);
-
-        for (int i = 0; i < randomCandyRatios.Length; i++ )
-        {
-            randomCandyRatios[i] = candyCounts[i] * (1 / totalCandies);
-        }
-    }
-
-    // Candy counts are not known set them beforehand spawning
-    // Blue 0, Green 1, Purple 2, Red 3
-    public void SetRatiosOfCandies(List<Tile> candies)
-    {
-        candyCounts = new int[_candyTypeCount];
-        for (int i = 0; i < candies.Count; i++)
-        {
-            Tile item = candies[i];
-            switch (item.candyType)
+            if (i < dominantCount)
             {
-                case CandyType.Blue:
-                    candyCounts[0]++;
-                    break;
-                case CandyType.Green:
-                    candyCounts[1]++;
-                    break;
-                case CandyType.Purple:
-                    candyCounts[2]++;
-                    break;
-                case CandyType.Red:
-                    candyCounts[3]++;
-                    break;
-                case CandyType.Empty:
-                    break;
+                candyTable.Add(new Tuple<int, int>(x, y), domType);
+                continue;
             }
+
+            candyTable.Add(new Tuple<int, int>(x, y), types[0]);
+            resetCount++;
+            if (resetCount >= normalCount)
+            {
+                resetCount = 0;
+                types.RemoveAt(0);
+            }
+
         }
-
-        int totalCandies = TotalCount(this.candyCounts);
-
-        for (int i = 0; i < randomCandyRatios.Length; i++)
-        {
-            randomCandyRatios[i] = candyCounts[i] * (1 / totalCandies);
-        }
-
-
     }
-    private int TotalCount(int[] arr)
+    
+    private int DominantCalc()
     {
-        int total = 0;
-
-        foreach (int item in arr)
-        {
-            total += item;
-        }
-        return total;
+        var ratio = _candyCounts / _typeArray.Length;
+        return ratio + _typeArray.Length - 1;
     }
-
-    bool GetItem(int percent)
+    
+    private int NonDominantCalc()
     {
-        int rand = UnityEngine.Random.Range(0, 100);
-        return rand < percent;
+        return (_candyCounts - DominantCalc()) / (_typeArray.Length - 1);
     }
+    
+
 
 }

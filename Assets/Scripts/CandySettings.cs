@@ -25,4 +25,9 @@ public class CandySettings
     }
 
 
+    public Sprite GetCandySprite(CandyType type)
+    {
+        return m_candySprites[Array.IndexOf(m_candyTypes, type)];
+    }
+
 }

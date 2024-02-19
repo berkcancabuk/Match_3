@@ -25,6 +25,8 @@ public class Board : MonoBehaviour
 
     private Sequence _mySequence;
 
+    public Sequence destroySequence;
+
     [Header("Candy Settings")] [SerializeField]
     private Transform parentCandy, parentTile;
 
@@ -48,7 +50,10 @@ public class Board : MonoBehaviour
 
     private const float SCALE_DURATION = 10;
 
-    public float lastDeltaTime = 0; 
+    public float lastDeltaTime = 0;
+    public float moveCandyTime = 0;
+    public int destroyCandyCount;
+
     private void Awake()
     {
         if (Instance != null)
@@ -62,7 +67,6 @@ public class Board : MonoBehaviour
 
         _matchChecker = GetComponent<MatchChecker>();
         _candySettings = new CandySettings(_candySprites, _candyTypes);
-        
     }
 
     private void Start()
@@ -89,14 +93,16 @@ public class Board : MonoBehaviour
                 _allBackGround[i, j] = backGroundTile.GetComponent<Tile>();
             }
         }
-        
+
         isReady = true;
+
+        Application.targetFrameRate = 120;
+        lastDeltaTime = 20 * Time.deltaTime;
+        moveCandyTime = 0.2f;
         await StartFill(_explotionCheckCandies);
         isSwapStarted = false;
-        Application.targetFrameRate = 60;
-        lastDeltaTime =  20*Time.fixedDeltaTime;
-        
     }
+
     public async UniTask FillEmptyTile()
     {
         if (!isReady)
@@ -104,9 +110,9 @@ public class Board : MonoBehaviour
             return;
         }
 
-        
+
         await ExplosionFill();
-       
+
         isReady = false;
 
         _candiesToExplode.Clear();
@@ -117,91 +123,99 @@ public class Board : MonoBehaviour
         {
             return;
         }
+
         _mySequence = DOTween.Sequence();
 
         foreach (var item in _candiesToExplode)
         {
             _mySequence.Join(ExplodingTile(item.GetComponent<Candy>()));
         }
+
         EventManager.OnAddScore?.Invoke(_candiesToExplode.Count);
         EventManager.OnPlaySound?.Invoke();
 
         // Append a function at the end of the anim cycle 
         //
-        _mySequence.AppendCallback(async () => {
-            await UniTask.Delay(10);
+        _mySequence.AppendCallback(async () =>
+        {
+            await UniTask.Delay(100);
             await _tileMover.TileBottomMovement(allCandies);
         });
         _mySequence.Play();
-
-        // 
-        //while (!_mySequence.IsComplete)
-        //{
-        //    await UniTask.Delay(0);
-        //}
-        //await UniTask.Delay((int)(lastDeltaTime*1000));
-        //await _tileMover.TileBottomMovement(allCandies);
     }
 
     private Tween ExplodingTile(Candy candy)
     {
         if (candy._particles != null)
             candy.GetComponentInChildren<ParticleSystem>().Play();
-        return candy.transform.DOScale(new Vector3(.5f, .5f, .5f), lastDeltaTime)
-            .SetEase(Ease.InBounce).OnComplete(() => Destroy(candy.gameObject));
+        return candy.transform.DOScale(new Vector3(.5f, .5f, .5f), moveCandyTime)
+            .SetEase(Ease.InBack).OnComplete(() => Destroy(candy.gameObject));
     }
-    
+
     private async void WaitSequence()
     {
         await _mySequence.Play().AsyncWaitForCompletion();
         return;
     }
+
     private async UniTask StartFill(List<Tile> tiles)
     {
+        
+        CandyType[] candyTypes = {CandyType.Blue, CandyType.Red, CandyType.Green, CandyType.Purple};
+        _randData = new ControlledRandomData(35, CandyType.Blue, candyTypes);
+        _randData.PrintCandies();
+        
         _explotionCheckCandies.Clear();
         for (int i = 0; i < row; i++)
         {
             _mySequence = DOTween.Sequence();
             for (int j = 0; j < column; j++)
             {
-                
                 if (allCandies[j, i] == null)
                 {
                     var candy = Instantiate(candyPrefab, new Vector2(j, row + 1),
                         Quaternion.identity, parentCandy);
                     allCandies[j, i] = candy.GetComponent<Tile>();
                     allCandies[j, i].arrayPos = new Vector2(j, i);
-                    int count = 0;
-                    while (count < 10)
-                    {
-                        Tuple<Sprite, CandyType> candySettings = _candySettings.GetRandomStyle();
-                        candy.GetComponent<SpriteRenderer>().sprite = candySettings.Item1;
-                        candy.GetComponent<Candy>().candyType = candySettings.Item2;
-                        candy.gameObject.name = _candyDefaultName + candySettings.Item2 + " " + j + "," + i;
-                        count++;
-
-                        if (!await _matchChecker.CheckStartExplosion(candy.GetComponent<Candy>()))
-                        {
-                            break;
-                        }
-                    }
+                    // int count = 0;
+                    // while (count < 10)
+                    // {
+                    //     Tuple<Sprite, CandyType> candySettings = _candySettings.GetRandomStyle();
+                    //     candy.GetComponent<SpriteRenderer>().sprite = candySettings.Item1;
+                    //     candy.GetComponent<Candy>().candyType = candySettings.Item2;
+                    //     candy.gameObject.name = _candyDefaultName + candySettings.Item2 + " " + j + "," + i;
+                    //     count++;
+                    //
+                    //     if (!await _matchChecker.CheckStartExplosion(candy.GetComponent<Candy>()))
+                    //     {
+                    //         break;
+                    //     }
+                    // }
+                    
+                    
+                    
+                    candy.GetComponent<Candy>().candyType = _randData.GetCandyTypeOfIndex(new Tuple<int, int>(j,i));
+                    candy.GetComponent<SpriteRenderer>().sprite = _candySettings.GetCandySprite(candy.GetComponent<Candy>().candyType);
+                    candy.gameObject.name = _candyDefaultName + candy.GetComponent<Candy>().candyType + " " + j + "," + i;
+                    //count++;
                     _explotionCheckCandies.Add(candy.GetComponent<Candy>());
                     MoveCandy(candy.transform, i, j);
                 }
-                
             }
-            print(DOTween.TotalActiveTweeners() + " tweener -- " + DOTween.TotalActiveSequences() + " sequencceesss" + DOTween.TotalActiveTweens() + " active tweens");
+
+            //print(DOTween.TotalActiveTweeners() + " tweener -- " + DOTween.TotalActiveSequences() + " sequencceesss" + DOTween.TotalActiveTweens() + " active tweens");
             await _mySequence.Play().AsyncWaitForCompletion();
         }
-        _randData = new ControlledRandomData(_levelCandyTypes, _explotionCheckCandies);
+        
     }
 
     private async UniTask ExplosionFill()
     {
         _explotionCheckCandies.Clear();
+
+        _mySequence = DOTween.Sequence();
         for (int i = 0; i < row; i++)
         {
-            _mySequence = DOTween.Sequence();
             for (int j = 0; j < column; j++)
             {
                 if (allCandies[j, i] == null)
@@ -211,7 +225,7 @@ public class Board : MonoBehaviour
 
                     var candy = Instantiate(candyPrefab, new Vector2(j, row + 1),
                         Quaternion.identity, parentCandy);
-                    
+
 
                     Tuple<Sprite, CandyType> candySettings = _candySettings.GetRandomStyle();
 
@@ -225,9 +239,10 @@ public class Board : MonoBehaviour
                     MoveCandy(candy.transform, i, j);
                 }
             }
-            await _mySequence.Play().AsyncWaitForCompletion();
         }
 
+        await _mySequence.Play().AsyncWaitForCompletion();
+        await UniTask.Delay(500);
     }
 
     public async UniTask SetMidSpecialCandy(Vector2 midPos)
@@ -236,7 +251,7 @@ public class Board : MonoBehaviour
         var y = (int)midPos.y;
         var candy = Instantiate(candyExplosion, midPos,
             Quaternion.identity, parentCandy);
-        candy.gameObject.name = "SpecialCandy" + "-> " + x+" - "+y;
+        candy.gameObject.name = "SpecialCandy" + "-> " + x + " - " + y;
         allCandies[x, y] = candy.GetComponent<Tile>();
         allCandies[x, y].arrayPos = midPos;
         allCandies[x, y].candyType = CandyType.Exploding;
@@ -245,9 +260,8 @@ public class Board : MonoBehaviour
 
     private void MoveCandy(Transform candy, int column, int row)
     {
-        Tween move = candy.DOMove(new Vector2(row, column), .4f);
+        Tween move = candy.DOMove(new Vector2(row, column), moveCandyTime).SetEase(Ease.OutCirc);
         _mySequence.Join(move);
-        
     }
 
     private const float TWEEN_DURATION = 10f;
@@ -257,15 +271,16 @@ public class Board : MonoBehaviour
         if (obj1.gameObject == null || obj2.gameObject == null) return;
         if (obj1.candyType == CandyType.Empty || obj2.candyType.Equals(CandyType.Empty)) return;
         _mySequence = DOTween.Sequence();
-        
+
         (obj2.arrayPos, obj1.arrayPos) = (obj1.arrayPos, obj2.arrayPos);
         var tempObj = obj1;
         allCandies[(int)obj2.arrayPos.x, (int)obj2.arrayPos.y] = obj2;
         allCandies[(int)obj1.arrayPos.x, (int)obj1.arrayPos.y] = tempObj;
-        
-        _mySequence.Join(obj1.transform.DOMove(obj2.transform.position, lastDeltaTime))
-            .Join(obj2.transform.DOMove(obj1.transform.position, lastDeltaTime));
+
+        _mySequence.Join(obj1.transform.DOMove(obj2.transform.position, moveCandyTime).SetEase(Ease.OutCirc))
+            .Join(obj2.transform.DOMove(obj1.transform.position, moveCandyTime).SetEase(Ease.OutCirc));
         await _mySequence.Play().AsyncWaitForCompletion();
+        isSwapStarted = false;
     }
 
     public bool CheckBottomIfEmpty(Vector2 pos)
@@ -321,9 +336,13 @@ public class Board : MonoBehaviour
         }
 
 
+        destroySequence = DOTween.Sequence();
         // Exploding candies block Should change it to support more special candies
         if (candy.candyType.Equals(CandyType.Exploding) && await _matchChecker.CheckExplosion((Candy)candy, allCandies))
         {
+            await destroySequence.Play().AsyncWaitForCompletion();
+            // EventManager.OnAddScore?.Invoke(destroyCandyCount);
+            // EventManager.OnPlaySound?.Invoke();
             await MovementBottomCheckDelay();
             return;
         }
@@ -335,19 +354,23 @@ public class Board : MonoBehaviour
 
     private async Task<bool> CheckSwappable(Tile candy, Tile secondCandy)
     {
+        destroySequence = DOTween.Sequence();
         var condition1 = !await _matchChecker.CheckExplosion((Candy)candy, allCandies);
         var condition2 = !await _matchChecker.CheckExplosion((Candy)secondCandy, allCandies);
+
         if (!condition1 || !condition2) return false;
         // Swap back
+        await destroySequence.Play().AsyncWaitForCompletion();
+        // EventManager.OnAddScore?.Invoke(destroyCandyCount);
+        // EventManager.OnPlaySound?.Invoke();
         await Swap(candy, secondCandy);
-        isSwapStarted = false;
-        return true;
 
+        return true;
     }
 
     private async Task MovementBottomCheckDelay()
     {
-        await UniTask.Delay((int)(lastDeltaTime*1000));
+        await UniTask.Delay((int)(lastDeltaTime * 1000));
         await _tileMover.TileBottomMovement(allCandies);
         isSwapStarted = false;
     }
@@ -361,7 +384,7 @@ public class Board : MonoBehaviour
     {
         if (allCandies[x, y].candyType == CandyType.Empty) return;
         allCandies[x, y - 1] = allCandies[x, y];
-        allCandies[x, y - 1].gameObject.transform.DOMove(new Vector2(x, y - 1), lastDeltaTime);
+        allCandies[x, y - 1].gameObject.transform.DOMove(new Vector2(x, y - 1), moveCandyTime).SetEase(Ease.OutCirc);
         allCandies[x, y - 1].candyType = allCandies[x, y].candyType;
         allCandies[x, y - 1].arrayPos = new Vector2(x, y - 1);
         allCandies[x, y] = null;

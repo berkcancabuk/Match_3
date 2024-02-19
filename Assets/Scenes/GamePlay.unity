@@ -1324,6 +1324,8 @@ MonoBehaviour:
   _levelCandyTypes: 4
   selectedObject: {x: 0, y: 0}
   lastDeltaTime: 0
+  moveCandyTime: 0
+  destroyCandyCount: 0
 --- !u!4 &1528675351
 Transform:
   m_ObjectHideFlags: 0
