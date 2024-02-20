@@ -172,8 +172,8 @@ public class MatchChecker : MonoBehaviour
                 continue;
             candy.candyType = CandyType.Empty;
             Board.Instance.MakeTileNull((int)candy.arrayPos.x, (int)candy.arrayPos.y);
-            //sequence.Join(candy.ExplodingTile());
             Board.Instance.destroySequence.Join(candy.ExplodingTile());
+            
         }
 
         //await sequence.Play().AsyncWaitForCompletion();
@@ -181,8 +181,9 @@ public class MatchChecker : MonoBehaviour
         {
             isSpecialCondition = false;
         }
-        
-        // EventManager.OnAddScore?.Invoke(candies.Count);
+
+        //Board.Instance.destroyCandyCount = candies.Count;
+        EventManager.OnAddScore?.Invoke(candies.Count);
         // EventManager.OnPlaySound?.Invoke();
     }
 

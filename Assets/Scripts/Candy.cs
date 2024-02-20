@@ -24,7 +24,7 @@ public class Candy : Tile
     {
         if (_particles != null)
             GetComponentInChildren<ParticleSystem>().Play();
-        return transform.DOScale(new Vector3(.5f, .5f, .5f), Board.Instance.lastDeltaTime)
+        return transform.DOScale(new Vector3(.5f, .5f, .5f), Board.Instance.moveCandyTime)
             .SetEase(Ease.InBack).OnComplete(() => Destroy(gameObject));
     }
 

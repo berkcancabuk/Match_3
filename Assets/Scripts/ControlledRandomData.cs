@@ -17,6 +17,8 @@ public class ControlledRandomData
     private CandyType[] _typeArray;
     private CandyType _dominantCandy;
 
+    
+
     private Dictionary<Tuple<int,int>, CandyType> candyTable = new Dictionary<Tuple<int,int>, CandyType>(); 
 
     public ControlledRandomData(int candyCount,CandyType dominantCandy, params CandyType[] candyTypes)
@@ -98,6 +100,8 @@ public class ControlledRandomData
         return (_candyCounts - DominantCalc()) / (_typeArray.Length - 1);
     }
     
+    
+   
 
 
 }

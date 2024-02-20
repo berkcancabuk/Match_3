@@ -10,6 +10,7 @@ using Cysharp.Threading.Tasks;
 public class Board : MonoBehaviour
 {
     public static Board Instance;
+    [SerializeField] private ObjectPooler _objectPooler;
     [SerializeField] private MatchChecker _matchChecker;
     public TileMover _tileMover = new();
     private CandySettings _candySettings;
@@ -67,6 +68,7 @@ public class Board : MonoBehaviour
 
         _matchChecker = GetComponent<MatchChecker>();
         _candySettings = new CandySettings(_candySprites, _candyTypes);
+        _objectPooler = GetComponent<ObjectPooler>();
     }
 
     private void Start()
@@ -98,7 +100,7 @@ public class Board : MonoBehaviour
 
         Application.targetFrameRate = 120;
         lastDeltaTime = 20 * Time.deltaTime;
-        moveCandyTime = 0.2f;
+        moveCandyTime = 0.4f;
         await StartFill(_explotionCheckCandies);
         isSwapStarted = false;
     }
@@ -109,8 +111,7 @@ public class Board : MonoBehaviour
         {
             return;
         }
-
-
+        
         await ExplosionFill();
 
         isReady = false;
@@ -149,7 +150,13 @@ public class Board : MonoBehaviour
         if (candy._particles != null)
             candy.GetComponentInChildren<ParticleSystem>().Play();
         return candy.transform.DOScale(new Vector3(.5f, .5f, .5f), moveCandyTime)
-            .SetEase(Ease.InBack).OnComplete(() => Destroy(candy.gameObject));
+            .SetEase(Ease.InBack).OnComplete(() => SetCandyPosition(candy));
+    }
+
+    private void SetCandyPosition(Candy candy)
+    {
+        candy.gameObject.transform.position = new Vector2(0, 20);
+        candy.gameObject.SetActive(false);
     }
 
     private async void WaitSequence()
@@ -160,11 +167,6 @@ public class Board : MonoBehaviour
 
     private async UniTask StartFill(List<Tile> tiles)
     {
-        
-        CandyType[] candyTypes = {CandyType.Blue, CandyType.Red, CandyType.Green, CandyType.Purple};
-        _randData = new ControlledRandomData(35, CandyType.Blue, candyTypes);
-        _randData.PrintCandies();
-        
         _explotionCheckCandies.Clear();
         for (int i = 0; i < row; i++)
         {
@@ -175,29 +177,26 @@ public class Board : MonoBehaviour
                 {
                     var candy = Instantiate(candyPrefab, new Vector2(j, row + 1),
                         Quaternion.identity, parentCandy);
+                    candy.SetActive(true);
                     allCandies[j, i] = candy.GetComponent<Tile>();
                     allCandies[j, i].arrayPos = new Vector2(j, i);
-                    // int count = 0;
-                    // while (count < 10)
-                    // {
-                    //     Tuple<Sprite, CandyType> candySettings = _candySettings.GetRandomStyle();
-                    //     candy.GetComponent<SpriteRenderer>().sprite = candySettings.Item1;
-                    //     candy.GetComponent<Candy>().candyType = candySettings.Item2;
-                    //     candy.gameObject.name = _candyDefaultName + candySettings.Item2 + " " + j + "," + i;
-                    //     count++;
-                    //
-                    //     if (!await _matchChecker.CheckStartExplosion(candy.GetComponent<Candy>()))
-                    //     {
-                    //         break;
-                    //     }
-                    // }
+                    int count = 0;
+                    while (count < 10)
+                    {
+                        Tuple<Sprite, CandyType> candySettings = _candySettings.GetRandomStyle();
+                        candy.GetComponent<SpriteRenderer>().sprite = candySettings.Item1;
+                        candy.GetComponent<Candy>().candyType = candySettings.Item2;
+                        candy.gameObject.name = _candyDefaultName + candySettings.Item2 + " " + j + "," + i;
+                        count++;
                     
+                        if (!await _matchChecker.CheckStartExplosion(candy.GetComponent<Candy>()))
+                        {
+                            break;
+                        }
+                    }
                     
-                    
-                    candy.GetComponent<Candy>().candyType = _randData.GetCandyTypeOfIndex(new Tuple<int, int>(j,i));
                     candy.GetComponent<SpriteRenderer>().sprite = _candySettings.GetCandySprite(candy.GetComponent<Candy>().candyType);
                     candy.gameObject.name = _candyDefaultName + candy.GetComponent<Candy>().candyType + " " + j + "," + i;
-                    //count++;
                     _explotionCheckCandies.Add(candy.GetComponent<Candy>());
                     MoveCandy(candy.transform, i, j);
                 }
@@ -220,13 +219,8 @@ public class Board : MonoBehaviour
             {
                 if (allCandies[j, i] == null)
                 {
-                    //var candy = Instantiate(candies[Random.Range(0, candies.Length)], new Vector2(j, row + 1),
-                    //    Quaternion.identity, parentCandy);
-
                     var candy = Instantiate(candyPrefab, new Vector2(j, row + 1),
                         Quaternion.identity, parentCandy);
-
-
                     Tuple<Sprite, CandyType> candySettings = _candySettings.GetRandomStyle();
 
                     candy.GetComponent<SpriteRenderer>().sprite = candySettings.Item1;
@@ -337,11 +331,12 @@ public class Board : MonoBehaviour
 
 
         destroySequence = DOTween.Sequence();
+        destroyCandyCount = 0;
         // Exploding candies block Should change it to support more special candies
         if (candy.candyType.Equals(CandyType.Exploding) && await _matchChecker.CheckExplosion((Candy)candy, allCandies))
         {
             await destroySequence.Play().AsyncWaitForCompletion();
-            // EventManager.OnAddScore?.Invoke(destroyCandyCount);
+            //EventManager.OnAddScore?.Invoke(destroyCandyCount);
             // EventManager.OnPlaySound?.Invoke();
             await MovementBottomCheckDelay();
             return;
@@ -354,6 +349,7 @@ public class Board : MonoBehaviour
 
     private async Task<bool> CheckSwappable(Tile candy, Tile secondCandy)
     {
+        destroyCandyCount = 0;
         destroySequence = DOTween.Sequence();
         var condition1 = !await _matchChecker.CheckExplosion((Candy)candy, allCandies);
         var condition2 = !await _matchChecker.CheckExplosion((Candy)secondCandy, allCandies);
@@ -361,7 +357,6 @@ public class Board : MonoBehaviour
         if (!condition1 || !condition2) return false;
         // Swap back
         await destroySequence.Play().AsyncWaitForCompletion();
-        // EventManager.OnAddScore?.Invoke(destroyCandyCount);
         // EventManager.OnPlaySound?.Invoke();
         await Swap(candy, secondCandy);
 
