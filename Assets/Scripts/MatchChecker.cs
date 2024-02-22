@@ -146,6 +146,7 @@ public class MatchChecker : MonoBehaviour
         
         foreach (var item in candies)
         {
+            if (item == null) continue;
             if (!await CheckStartExplosion(item.GetComponent<Candy>())) continue;
             if (emptyTiles.Contains(item) || item.candyType == CandyType.Exploding) continue;
             emptyTiles.Add(item);
@@ -172,7 +173,7 @@ public class MatchChecker : MonoBehaviour
                 continue;
             candy.candyType = CandyType.Empty;
             Board.Instance.MakeTileNull((int)candy.arrayPos.x, (int)candy.arrayPos.y);
-            Board.Instance.destroySequence.Join(candy.ExplodingTile());
+            Board.Instance.destroySequence.Join(Board.Instance.ExplodingTile((Candy)candy));
             
         }
 
@@ -205,7 +206,7 @@ public class MatchChecker : MonoBehaviour
                 continue;
             candy.candyType = CandyType.Empty;
             Board.Instance.MakeTileNull((int)candy.arrayPos.x, (int)candy.arrayPos.y);
-            sequence.Join(candy.ExplodingTile());
+            sequence.Join(Board.Instance.ExplodingTile((Candy)candy));
         }
         
         await sequence.Play().AsyncWaitForCompletion();

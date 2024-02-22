@@ -1,5 +1,6 @@
 using Enums;
 using System;
+using Unity.VisualScripting;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -8,15 +9,17 @@ public class CandySettings
 {
     private Sprite[] m_candySprites;
     private CandyType[] m_candyTypes;
-
     public CandySettings(Sprite[] sprites, CandyType[] types)
     {
         this.m_candySprites = sprites;
         this.m_candyTypes = types;
     }
 
+
+
+
     //OLABİLME OLASILIĞI
-    private float[] colorProbablities = new float[4] { 5f, 3f, 12f, 80f };
+    private float[] colorProbablities = new float[4] { 25f, 25f, 25f, 25f };
     public Tuple<Sprite, CandyType> GetRandomStyle()
     {
         

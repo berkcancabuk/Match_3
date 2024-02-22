@@ -75,6 +75,7 @@ public class Board : MonoBehaviour
     {
         _allBackGround = new Tile[column, row];
         allCandies = new Tile[column, row];
+        UniTask.Delay(100);
         SetUp();
     }
 
@@ -145,12 +146,21 @@ public class Board : MonoBehaviour
         _mySequence.Play();
     }
 
-    private Tween ExplodingTile(Candy candy)
+    public Tween ExplodingTile(Candy candy)
     {
         if (candy._particles != null)
             candy.GetComponentInChildren<ParticleSystem>().Play();
+      // allCandies[(int)candy.arrayPos.x, (int)candy.arrayPos.y].candyType = CandyType.Empty;
+
+        allCandies[(int)candy.arrayPos.x, (int)candy.arrayPos.y] = null;
+
         return candy.transform.DOScale(new Vector3(.5f, .5f, .5f), moveCandyTime)
-            .SetEase(Ease.InBack).OnComplete(() => SetCandyPosition(candy));
+            .SetEase(Ease.InBack).OnComplete(() => Set(candy));
+    }
+
+    public void Set(Candy candy)
+    {
+        candy.gameObject.SetActive(false);
     }
 
     private void SetCandyPosition(Candy candy)
@@ -175,8 +185,12 @@ public class Board : MonoBehaviour
             {
                 if (allCandies[j, i] == null)
                 {
-                    var candy = Instantiate(candyPrefab, new Vector2(j, row + 1),
-                        Quaternion.identity, parentCandy);
+                    //var candy = Instantiate(candyPrefab, new Vector2(j, row + 1),
+                    //    Quaternion.identity, parentCandy);
+
+                    var candy = _objectPooler.GetPooledObject();
+                    candy.transform.position = new Vector2(j, row + 1);
+
                     candy.SetActive(true);
                     allCandies[j, i] = candy.GetComponent<Tile>();
                     allCandies[j, i].arrayPos = new Vector2(j, i);
@@ -219,8 +233,14 @@ public class Board : MonoBehaviour
             {
                 if (allCandies[j, i] == null)
                 {
-                    var candy = Instantiate(candyPrefab, new Vector2(j, row + 1),
-                        Quaternion.identity, parentCandy);
+
+                    //var candy = Instantiate(candyPrefab, new Vector2(j, row + 1),
+                    //    Quaternion.identity, parentCandy);
+
+                    var candy = _objectPooler.GetPooledObject();
+                    print(candy.GetComponent<Candy>().candyType);
+                    candy.transform.position = new Vector2(j, row + 1);
+                    candy.SetActive(true);
                     Tuple<Sprite, CandyType> candySettings = _candySettings.GetRandomStyle();
 
                     candy.GetComponent<SpriteRenderer>().sprite = candySettings.Item1;
