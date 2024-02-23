@@ -6,9 +6,10 @@ public class ObjectPooler : MonoBehaviour
     public GameObject prefabToPool;
     public int poolSize = 50;
 
-    public List<GameObject> pooledObjects = new List<GameObject>();
+    private Queue<GameObject> poolQueue = new Queue<GameObject>();
     [SerializeField] private int head = 0;
     private Vector3 _resetScale;
+
     void Awake()
     {
         _resetScale = new Vector3(1f, 1f, 1f);
@@ -16,33 +17,26 @@ public class ObjectPooler : MonoBehaviour
         {
             GameObject obj = Instantiate(prefabToPool,new Vector2(0,10),Quaternion.identity);
             obj.SetActive(false);
-            pooledObjects.Add(obj);
+            poolQueue.Enqueue(obj);
         }
     }
 
-
-
-    public GameObject GetPooledObject()
+    public GameObject GetObjectFromQueue()
     {
-        
-        for (int i = 0; i < poolSize; i++)
+        if (poolQueue.Count > 0)
         {
-            if (!pooledObjects[i].gameObject.activeInHierarchy)
-            {
-                pooledObjects[i].gameObject.transform.localScale = _resetScale;
-                return pooledObjects[i];
-
-            }
-
+            var obj = poolQueue.Dequeue();
+            obj.transform.localScale = _resetScale;
+            return obj;
         }
         return null;
     }
 
-
-
-
-
-
+    public void ReturnObjectToQueue(GameObject obj)
+    {
+        obj.SetActive(false);
+        poolQueue.Enqueue(obj);
+    }
 
 
 

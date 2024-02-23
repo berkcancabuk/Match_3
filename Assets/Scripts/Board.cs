@@ -160,7 +160,7 @@ public class Board : MonoBehaviour
 
     public void Set(Candy candy)
     {
-        candy.gameObject.SetActive(false);
+        _objectPooler.ReturnObjectToQueue(candy.gameObject);
     }
 
     private void SetCandyPosition(Candy candy)
@@ -188,7 +188,7 @@ public class Board : MonoBehaviour
                     //var candy = Instantiate(candyPrefab, new Vector2(j, row + 1),
                     //    Quaternion.identity, parentCandy);
 
-                    var candy = _objectPooler.GetPooledObject();
+                    var candy = _objectPooler.GetObjectFromQueue();
                     candy.transform.position = new Vector2(j, row + 1);
 
                     candy.SetActive(true);
@@ -237,8 +237,7 @@ public class Board : MonoBehaviour
                     //var candy = Instantiate(candyPrefab, new Vector2(j, row + 1),
                     //    Quaternion.identity, parentCandy);
 
-                    var candy = _objectPooler.GetPooledObject();
-                    print(candy.GetComponent<Candy>().candyType);
+                    var candy = _objectPooler.GetObjectFromQueue();
                     candy.transform.position = new Vector2(j, row + 1);
                     candy.SetActive(true);
                     Tuple<Sprite, CandyType> candySettings = _candySettings.GetRandomStyle();
